@@ -2,9 +2,11 @@
 //  conventions.h
 //  TP4 Algoritmos 1
 //
-//  Created by fmonpelat on 6/14/14.
-//  Copyright (c) 2014 ___FMONPELAT___. All rights reserved.
+//  Copyright (c) 2014 . All rights reserved.
 //
+//  Facundo Monpelat
+//  Luca Mazzer
+//  Erik Schatz
 
 #ifndef TP4_Algoritmos_1_conventions_h
 #define TP4_Algoritmos_1_conventions_h

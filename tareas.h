@@ -57,8 +57,8 @@ void DestruirEquipos(tequipo*); /*libera la memoria */
 //ERIK
 tlista TraerPartidos(); /*Lee el .txt, convierte los datos a nodos de una tlista */
 void DestruirPartidos(tlista); /*libera la memoria */
-/*
 
+/*
 PARTIDOS:
 BuscarPartidoPorId
 BuscarPartidoPorEquipos
@@ -71,8 +71,6 @@ REPORTES:
 ListarPartidosPendientes
 ListarEquipos
 VerPosiciones
-
-Test
 */
 
 #endif

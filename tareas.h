@@ -50,12 +50,28 @@ tlista partidosPendientes;
 
 
 tequipo * TraerEquipos(); /*Lee el .txt, convierte los datos a un array de equipos */
+	/*funciones especificas, auxiliares, bleble*/
 size_t CantEquipos(tequipo*);
 void DestruirEquipos(tequipo*); /*libera la memoria */
 
 tlista TraerPartidos(); /*Lee el .txt, convierte los datos a nodos de una tlista */
 void DestruirPartidos(tlista); /*libera la memoria */
+/*
 
+PARTIDOS:
+BuscarPartidoPorId
+BuscarPartidoPorEquipos
+ModificarPartidosJugado
+(no especificada) ModifcarFechaPorPartido
+CrearPartidosJugado (lo crea ordenado por puntos de mayor a menor)
+EliminarPartidoJugado
 
+REPORTES:
+ListarPartidosPendientes
+ListarEquipos
+VerPosiciones
+
+Test
+*/
 
 #endif

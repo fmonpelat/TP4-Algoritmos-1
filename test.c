@@ -9,6 +9,8 @@
 //  Erik Schatz
 
 #include <stdio.h>
+#include <stdlib.h>
+#include "tareas.h"
 
 /* definicion de testing */
 

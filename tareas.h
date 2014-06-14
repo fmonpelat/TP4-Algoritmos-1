@@ -49,7 +49,7 @@ tlista partidosPendientes;
 }tmundial;
 
 //FACU
-tequipo * TraerEquipos(); /*Lee el .txt, convierte los datos a un array de equipos */
+tequipo * TraerEquipos( void ); /*Lee el .txt, convierte los datos a un array de equipos */
 	/*funciones especificas, auxiliares, bleble*/
 size_t CantEquipos(tequipo*);
 void DestruirEquipos(tequipo*); /*libera la memoria */

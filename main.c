@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include "tareas.h"
+#include <stdlib.h>
 
 
 

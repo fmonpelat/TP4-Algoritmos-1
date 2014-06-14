@@ -1,0 +1,33 @@
+A1;Brasil
+A2;Croacia
+A3;Mexico
+A4;Camerun
+B1;Espania
+B2;Holanda
+B3;Chile
+B4;Australia
+C1;Colombia
+C2;Grecia
+C3;Costa de marfil
+C4;Japon
+D1;Uruguay
+D2;Costa Rica
+D3;Inglaterra
+D4;Italia
+E1;Suiza
+E2;Ecuador
+E3;Francia
+E4;Honduras
+F1;Argentina
+F2;Bosnia
+F3;Iran
+F4;Nigeria
+G1;Alemania
+G2;Portugal
+G3;Ghana
+G4;Estados Unidos
+H1;Belgica
+H2;Argelia
+H3;Rusia
+H4;Corea del sur
+

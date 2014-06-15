@@ -15,21 +15,17 @@
 #include <stdio.h>
 #include "tareas.h"
 #include <stdlib.h>
-
-
-
-
+#include <string.h>
 
 
 int main(int argc, const char * argv[])
 {
 
-
+    tequipo * eqaux;
           
-
+    eqaux=TraerEquipos();
     
-    
-    
+    return 0;
     
 }
 

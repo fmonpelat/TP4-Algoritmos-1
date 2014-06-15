@@ -8,6 +8,7 @@
 
 #ifndef TP4_Algoritmos_1_tareas_h
 #define TP4_Algoritmos_1_tareas_h
+
 #define M_ID 2
 #define M 64
 
@@ -53,6 +54,8 @@ tequipo * TraerEquipos( void ); /*Lee el .txt, convierte los datos a un array de
 	/*funciones especificas, auxiliares, bleble*/
 size_t CantEquipos(tequipo*);
 void DestruirEquipos(tequipo*); /*libera la memoria */
+void dump_line(FILE *);
+
 
 //ERIK
 tlista TraerPartidos(); /*Lee el .txt, convierte los datos a nodos de una tlista */

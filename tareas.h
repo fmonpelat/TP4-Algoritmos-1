@@ -9,7 +9,8 @@
 #ifndef TP4_Algoritmos_1_tareas_h
 #define TP4_Algoritmos_1_tareas_h
 
-#define M_ID 2
+//M_ID debe ser mayor a 0 si es que guardaremos los grupos y el numero ej: A1 sino no hay lugar para el '\0'
+#define M_ID 3
 #define M 64
 
 /* PROTOTYPES 
@@ -18,7 +19,7 @@
 typedef struct equipo{
 char id[M_ID];
 char nombre[M];
-}tequipo;
+} tequipo;
 
 typedef struct fecha{
 int dd;
@@ -50,10 +51,12 @@ tlista partidosPendientes;
 }tmundial;
 
 //FACU
-tequipo * TraerEquipos( void ); /*Lee el .txt, convierte los datos a un array de equipos */
-	/*funciones especificas, auxiliares, bleble*/
-size_t CantEquipos(tequipo*);
+//EQUIPOS DONE
+size_t TraerEquipos( tequipo ** ); /*Lee el .txt, convierte los datos a un array de equipos */
+void TestEquipos( void );
 void DestruirEquipos(tequipo*); /*libera la memoria */
+
+/* AUX compatibilidad macosx simil fflush. */
 void dump_line(FILE *);
 
 

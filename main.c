@@ -21,9 +21,17 @@
 int main(int argc, const char * argv[])
 {
 
-    tequipo * eqaux;
-          
-    eqaux=TraerEquipos();
+    
+    tequipo * eqaux=NULL;
+    size_t i,cantEquipos;
+    
+    cantEquipos=TraerEquipos(&eqaux);
+    
+    for (i=0; i<cantEquipos; i++) {
+        printf("Grupo: %s Pais: %s\n",eqaux[i].id,eqaux[i].nombre);
+    }
+    
+    DestruirEquipos(eqaux);
     
     return 0;
     

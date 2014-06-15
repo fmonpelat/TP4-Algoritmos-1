@@ -24,74 +24,76 @@ void dump_line(FILE *fp) {
 
 
 
-tequipo * TraerEquipos( void ){
+size_t TraerEquipos( tequipo **  equipos ){
     
-    tequipo * equipos=NULL;
+    if ( (*equipos)!=NULL ) {
+        fprintf(stderr, "Error, por favor ingrese un puntero equipo nulo");
+        return 0;
+    }
+    
     tequipo * aux=NULL;
     size_t used_size=0;
     size_t alloc_size=0,init_chop=2,chop_size=2;
-    size_t i=0;
-
     FILE * fpequipos;
     char str[M_ID+M];
-    char grupo[M_ID+1];
-    char pais[M+1];
     char * pstr;
-    
-
+    char* pstr2;
 
     if (  !( fpequipos = fopen("grupos.txt", "r") )  ){
         fprintf(stderr, "Error, no se pudo abrir grupos.txt, existe?");
-        return NULL;
+        return 0;
     }
     
-    
-    if (  !( equipos = (tequipo*)malloc( sizeof(tequipo)*init_chop) )  ) {
+    /* pedimos memoria por primera vez antes de reallocar si es que necesitamos memoria.
+     */
+    if (  !( *equipos = (tequipo*)malloc( sizeof(tequipo)*init_chop) )  ) {
         fprintf(stderr, "Error, could not find memory");
-        return NULL;
+        return 0;
     }
+    
     alloc_size=init_chop;
     
     while ( fgets(str, M_ID+M+1 , fpequipos) ){
         
+        /* nos preguntamos si necesitamos memoria ... pedimos de a chops o de a pedazos
+         */
         if ( used_size == alloc_size ) {
         
-            if (  !( aux = (tequipo *)realloc(equipos, sizeof(tequipo)*( alloc_size+chop_size) ))  ) {
+            if (  !( aux = (tequipo *)realloc(*equipos, sizeof(tequipo)*( alloc_size+chop_size) ))  ) {
                 fprintf(stderr, "Error, could not find memory");
-                free(equipos);
-                equipos=NULL;
-                return NULL;
+                free(*equipos);
+                *equipos=NULL;
+                return 0;
             }
-            equipos=aux;
+            *equipos=aux;
             alloc_size+=chop_size;
         }
         
- 
         pstr = strtok(str,";");
-        strcpy(equipos[used_size].id,pstr);
-        //printf("%s\n",pstr);
-        while (  (pstr = strtok (NULL, ";"))!=NULL  ) {
-
+        if ( pstr ) strcpy ( (*equipos)[used_size].id , pstr);
         
-                printf("%s",pstr);
-                strcpy(equipos[used_size].nombre,pstr);
-                
-            
-        }
+        pstr = strtok(NULL,";");
+        pstr2 = strtok(pstr,"\r\n");
+       
+        if( pstr2 ) strcpy( (*equipos)[used_size].nombre, pstr2);
+        
         used_size++;
     
     }
-    for (i=0; i<used_size; i++) {
-    //printf("Grupo: %s Pais: %s",equipos[i].id,equipos[i].nombre);
-    }
     
-    return NULL;
+    // para debug sacar despues de pasar las pruebas
+    //printf("%s\n",equipos[1].nombre);
+    //printf("%s\n",equipos[1].id);
+    
+    return used_size-1;
 }
 
 
+void DestruirEquipos( tequipo * equipos){
+    
+    free(equipos);
 
-
-
+}
 
 
 

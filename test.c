@@ -13,5 +13,19 @@
 #include <string.h>
 #include "tareas.h"
 
-/* definicion de testing */
+/* definiciones de testing */
 
+void TestEquipos(){
+    
+    tequipo * eqaux=NULL;
+    size_t i,cantEquipos;
+    
+    cantEquipos=TraerEquipos(&eqaux);
+    
+    for (i=0; i<cantEquipos; i++) {
+        printf("Grupo: %s Pais: %s\n",eqaux[i].id,eqaux[i].nombre);
+    }
+    
+    DestruirEquipos(eqaux);
+
+}

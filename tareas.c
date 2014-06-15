@@ -80,7 +80,7 @@ size_t TraerEquipos( tequipo **  equipos ){
         used_size++;
     
     }
-    
+    fclose(fpequipos);
     // para debug sacar despues de pasar las pruebas
     //printf("%s\n",equipos[1].nombre);
     //printf("%s\n",equipos[1].id);

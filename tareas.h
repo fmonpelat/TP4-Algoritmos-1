@@ -66,8 +66,12 @@ void DestruirPartidos(tlista); /*libera la memoria */
 
 /*
 PARTIDOS:
+//LUCA
 BuscarPartidoPorId
 BuscarPartidoPorEquipos
+ 
+ 
+ 
 ModificarPartidosJugado
 (no especificada) ModifcarFechaPorPartido
 CrearPartidosJugado (lo crea ordenado por puntos de mayor a menor)

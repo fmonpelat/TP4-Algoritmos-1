@@ -33,8 +33,9 @@ size_t TraerEquipos( tequipo **  equipos ){
     
     tequipo * aux=NULL;
     size_t used_size=0;
-    size_t alloc_size=0,init_chop=2,chop_size=2;
+    size_t alloc_size=0,init_chop=2,chop_size=4;
     FILE * fpequipos;
+    size_t i=0;
     char str[M_ID+M];
     char * pstr;
     char* pstr2;
@@ -67,6 +68,10 @@ size_t TraerEquipos( tequipo **  equipos ){
             }
             *equipos=aux;
             alloc_size+=chop_size;
+            i++;
+            /* debugging alloc size callouts
+            printf("counter:%lu alloc:%lu chop_size:%lu\n",i,alloc_size,chop_size);
+            */
         }
         
         pstr = strtok(str,";");
@@ -78,8 +83,9 @@ size_t TraerEquipos( tequipo **  equipos ){
         if( pstr2 ) strcpy( (*equipos)[used_size].nombre, pstr2);
         
         used_size++;
-    
+        
     }
+    
     fclose(fpequipos);
     // para debug sacar despues de pasar las pruebas
     //printf("%s\n",equipos[1].nombre);

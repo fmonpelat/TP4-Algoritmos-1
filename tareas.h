@@ -57,11 +57,11 @@ void TestEquipos( void );
 void DestruirEquipos(tequipo*); /*libera la memoria */
 
 /* AUX compatibilidad macosx simil fflush. */
-void dump_line(FILE *);
+/*void dump_line(FILE *);*/
 
 
 //ERIK
-tlista TraerPartidos(); /*Lee el .txt, convierte los datos a nodos de una tlista */
+size_t TraerPartidos(tequipo* equipos, tlista* lista); /*Lee el .txt, convierte los datos a nodos de una tlista */
 void DestruirPartidos(tlista); /*libera la memoria */
 
 /*

@@ -123,9 +123,7 @@ size_t TraerPartidos( tequipo * equipos,size_t sizeEquipos, tlista * lista)
         
 		int idPartido = 0;
 		char idEquipo1[M_ID];
-        idEquipo1[2]='\0';
 		char idEquipo2[M_ID];
-        idEquipo2[2]='\0';
 		int dia = 0, mes = 0, anio = 0;
 		/*Parseo segun el formato de partidos.txt*/
 		fscanf(fileReader, "%d;%2c;%2c;%d/%d/%d\n", &idPartido, (char * )&idEquipo1, (char *)&idEquipo2, &dia, &mes, &anio);
@@ -152,6 +150,8 @@ void AgregarNodoEquipo(tnodo ** nodo, tequipo* equipos,size_t sizeEquipos, int i
 		(*nodo)->dato->idPartido = idPartido;
 		(*nodo)->dato->equipo1 = BuscarEquipoPorId(equipos, idEquipo1, sizeEquipos);
 		(*nodo)->dato->equipo2 = BuscarEquipoPorId(equipos, idEquipo2, sizeEquipos);
+        (*nodo)->dato->golesEq1=0;
+        (*nodo)->dato->golesEq2=0;
 		(*nodo)->dato->fecha.dd = dia;
 		(*nodo)->dato->fecha.mm = mes;
 		(*nodo)->dato->fecha.aaaa = anio;
@@ -216,12 +216,77 @@ void DestruirPartidos( tnodo * nodo){
 
 
 
+// GRABACION DE ARCHIVOS BINARIOS
+
+t_bool GrabarPartidosJugados( tlista * lista_jugados ){
+    
+    FILE * fpPartidosJugados;
+    char NombreArchivo[M];
+    strcpy(NombreArchivo, "partidosjugados.dat");
+    
+    int buffer[M_ID-1];
+    
+    
+    fpPartidosJugados = fopen(NombreArchivo,"wb");
+    
+    if (!fpPartidosJugados) {
+        fprintf(stderr, "Error, no se pudo abrir %s",NombreArchivo);
+        return TRUE;
+    }
+    
+    while ( !((*lista_jugados)->sig) ) {
+
+        buffer[0] = (*lista_jugados)->dato->idPartido;
+        buffer[1] = (*lista_jugados)->dato->golesEq1;
+        buffer[1] = (*lista_jugados)->dato->golesEq2;
+        
+        fwrite(buffer, sizeof(int), sizeof(buffer), fpPartidosJugados);
+        
+    }
+    
+    return FALSE;
+    
+}
 
 
 
 
 
+// ############### LUCA ############################
 
+
+tpartido * BuscarPartidoPorId (tlista lista, int id){
+    
+    tnodo * aux = lista;
+    
+    
+    while ( aux ){
+        
+        if( aux->dato->idPartido == id )  return aux->dato;
+        else  aux = aux->sig;
+        
+    }
+    
+    return NULL;
+    
+}
+
+
+
+tpartido * BuscarPartidoPorEquipos (tlista lista, char * id1, char * id2 ){
+    
+    tnodo * aux= lista;
+    
+    while ( aux ){
+        
+        if( !(strcmp(aux->dato->equipo1->id,id1)) && !(strcmp(aux->dato->equipo2->id,id2))  )  return aux->dato;
+        else  aux= aux->sig;
+        
+    }
+    
+    return NULL;
+    
+}
 
 
 

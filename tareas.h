@@ -13,6 +13,9 @@
 #define M_ID 3
 #define M 64
 
+
+typedef enum bool{ TRUE, FALSE } t_bool;
+
 /* PROTOTYPES 
  */
 
@@ -66,21 +69,36 @@ void DestruirEquipos(tequipo*); /*libera la memoria */
 size_t TraerPartidos( tequipo * ,size_t , tlista * );
 void TestTraerPartidos( void );
 void DestruirPartidos( tnodo * nodo); /*libera la memoria */
-
-
 void AgregarNodoEquipo( tnodo ** , tequipo* ,size_t , int , char * , char * , int , int , int );
 tequipo* BuscarEquipoPorId( tequipo * , char * , size_t );
 void RecorrerPartidos( tlista );
 
+// validar unicos ids de partidos de la lista.
+
+
+// funciones sobre el archivo binario
+
+// la funcion devuelve estados de error TRUE o FALSE
+t_bool GrabarPartidosJugados( tlista * );
+
+
+// leer partidos
+
+
+
+
+
+
+
+//LUCA
+tpartido * BuscarPartidoPorId(tlista ,int );
+tpartido * BuscarPartidoPorEquipos (tlista ,char * ,char * );
+void TestBusquedaPartidos( tlista );
+
+
+
 
 /*
-PARTIDOS:
-//LUCA
-BuscarPartidoPorId
-BuscarPartidoPorEquipos
- 
- 
- 
 ModificarPartidosJugado
 (no especificada) ModifcarFechaPorPartido
 CrearPartidosJugado (lo crea ordenado por puntos de mayor a menor)

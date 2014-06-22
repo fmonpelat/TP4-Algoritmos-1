@@ -46,3 +46,22 @@ void TestTraerPartidos(void){
     DestruirPartidos( listaEquipos );
     
 }
+
+void TestBusquedaPartidos( tlista listaEquipos ){
+    
+    tpartido * auxprueba;
+    
+    auxprueba = BuscarPartidoPorId( listaEquipos, 48 );
+    if (auxprueba) printf("eq1:%s eq2:%s\n",auxprueba->equipo1->nombre,auxprueba->equipo2->nombre);
+    
+    auxprueba = BuscarPartidoPorEquipos (listaEquipos ,"A1" , "A2" );
+    if (auxprueba) printf("eq1:%s eq2:%s\n",auxprueba->equipo1->nombre,auxprueba->equipo2->nombre);
+    
+
+
+}
+
+
+
+
+

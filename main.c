@@ -23,9 +23,30 @@ int main(int argc, const char * argv[])
 
     
     //TestEquipos();
-    TestTraerPartidos();
+    //TestTraerPartidos();
+    
 
-
+    tequipo * equipos=NULL;
+    size_t cantEquipos;
+    tlista listaEquipos;
+    
+    cantEquipos=TraerEquipos(&equipos);
+    
+    TraerPartidos(equipos,cantEquipos,&listaEquipos);
+    //RecorrerPartidos(listaEquipos);
+    
+    
+    //al salir guardamos la informacion antes de destruir la memoria
+    if( GrabarPartidosJugados( lista_jugados )==TRUE ){
+        return 1;
+    };
+    
+    
+    DestruirPartidos( listaEquipos );
+    DestruirEquipos(equipos);
+    
+    
+    
     
     return 0;
     

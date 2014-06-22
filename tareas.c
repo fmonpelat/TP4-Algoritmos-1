@@ -280,6 +280,7 @@ tpartido * BuscarPartidoPorEquipos (tlista lista, char * id1, char * id2 ){
     while ( aux ){
         
         if( !(strcmp(aux->dato->equipo1->id,id1)) && !(strcmp(aux->dato->equipo2->id,id2))  )  return aux->dato;
+        if( !(strcmp(aux->dato->equipo1->id,id2)) && !(strcmp(aux->dato->equipo2->id,id1))  )  return aux->dato;
         else  aux= aux->sig;
         
     }

@@ -21,7 +21,11 @@
 int main(int argc, const char * argv[])
 {
 
-    TestEquipos();
+    
+    //TestEquipos();
+    TestTraerPartidos();
+
+
     
     return 0;
     

@@ -60,9 +60,18 @@ void DestruirEquipos(tequipo*); /*libera la memoria */
 /*void dump_line(FILE *);*/
 
 
+
+
 //ERIK
-size_t TraerPartidos(tequipo* equipos, tlista* lista); /*Lee el .txt, convierte los datos a nodos de una tlista */
-void DestruirPartidos(tlista); /*libera la memoria */
+size_t TraerPartidos( tequipo * ,size_t , tlista * );
+void TestTraerPartidos( void );
+void DestruirPartidos( tnodo * nodo); /*libera la memoria */
+
+
+void AgregarNodoEquipo( tnodo ** , tequipo* ,size_t , int , char * , char * , int , int , int );
+tequipo* BuscarEquipoPorId( tequipo * , char * , size_t );
+void RecorrerPartidos( tlista );
+
 
 /*
 PARTIDOS:

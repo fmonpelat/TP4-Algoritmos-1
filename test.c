@@ -15,7 +15,7 @@
 
 /* definiciones de testing */
 
-void TestEquipos(){
+void TestEquipos(void){
     
     tequipo * eqaux=NULL;
     size_t i,cantEquipos;
@@ -28,4 +28,21 @@ void TestEquipos(){
     
     DestruirEquipos(eqaux);
 
+}
+
+void TestTraerPartidos(void){
+
+    
+    tequipo * equipos=NULL;
+    size_t cantEquipos;
+    tlista listaEquipos;
+    
+    cantEquipos=TraerEquipos(&equipos);
+    
+    TraerPartidos(equipos,cantEquipos,&listaEquipos);
+    
+    RecorrerPartidos(listaEquipos);
+
+    DestruirPartidos( listaEquipos );
+    
 }

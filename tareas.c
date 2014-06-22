@@ -101,6 +101,132 @@ void DestruirEquipos( tequipo * equipos){
 
 }
 
+// ########## ERIK ######################################
+
+
+size_t TraerPartidos( tequipo * equipos,size_t sizeEquipos, tlista * lista)
+{
+    //aca hacemos que lo apuntado por lista que es un tnodo * sea null.
+	(*lista) = NULL;
+	FILE * fileReader;
+    
+    
+	if (  !(fileReader = fopen("partidos.txt", "r"))  )
+	{
+		puts("No existe el archivo partidos.txt");
+		return 1;
+	}
+    
+	while (!feof(fileReader))
+	{
+        
+        
+		int idPartido = 0;
+		char idEquipo1[M_ID];
+        idEquipo1[2]='\0';
+		char idEquipo2[M_ID];
+        idEquipo2[2]='\0';
+		int dia = 0, mes = 0, anio = 0;
+		/*Parseo segun el formato de partidos.txt*/
+		fscanf(fileReader, "%d;%2c;%2c;%d/%d/%d\n", &idPartido, (char * )&idEquipo1, (char *)&idEquipo2, &dia, &mes, &anio);
+        
+		idEquipo1[2] = '\0';
+		idEquipo2[2] = '\0';
+		/*Agrego,por linea, un nodo  a la lista */
+		AgregarNodoEquipo(&(*lista), equipos, sizeEquipos, idPartido, idEquipo1, idEquipo2, dia, mes, anio);
+	}
+    
+	/*Le asigno la cadena a la lista*/
+	//(*lista) = aux;
+    
+	return 1;
+}
+
+void AgregarNodoEquipo(tnodo ** nodo, tequipo* equipos,size_t sizeEquipos, int idPartido, char * idEquipo1, char * idEquipo2, int dia, int mes, int anio)
+{
+	if (!(*nodo))
+	{
+		tnodo* aux = (*nodo);
+		(*nodo) = (tnodo*)malloc(sizeof(tnodo)* 1);
+		(*nodo)->dato = (tpartido*)malloc(sizeof(tpartido)* 1);
+		(*nodo)->dato->idPartido = idPartido;
+		(*nodo)->dato->equipo1 = BuscarEquipoPorId(equipos, idEquipo1, sizeEquipos);
+		(*nodo)->dato->equipo2 = BuscarEquipoPorId(equipos, idEquipo2, sizeEquipos);
+		(*nodo)->dato->fecha.dd = dia;
+		(*nodo)->dato->fecha.mm = mes;
+		(*nodo)->dato->fecha.aaaa = anio;
+		(*nodo)->sig = aux;
+	}
+	else
+	{
+		AgregarNodoEquipo(&(*nodo)->sig, equipos, sizeEquipos, idPartido, idEquipo1, idEquipo2, dia, mes, anio);
+	}
+    
+}
+
+void RecorrerPartidos(tlista lista)
+{
+	while (lista)
+	{
+		if (lista->dato->idPartido)
+			printf("%d", lista->dato->idPartido);
+        
+		if (lista->dato->fecha.dd && lista->dato->fecha.mm && lista->dato->fecha.aaaa)
+			printf(" (%d/%d/%d) ", lista->dato->fecha.dd, lista->dato->fecha.mm, lista->dato->fecha.aaaa);
+        
+		if (lista->dato->equipo1 && lista->dato->equipo2)
+			printf("Equipo1: %s, Equipo2: %s", lista->dato->equipo1->nombre, lista->dato->equipo2->nombre);
+		puts("");
+        
+		lista = lista->sig;
+	}
+    
+}
+
+tequipo * BuscarEquipoPorId(tequipo * equipos, char * id , size_t size){
+    
+    size_t i;
+    
+    for (i=0; i!=size; i++) {
+    
+		if ( !strcmp(equipos[i].id, id) )
+		{
+			return &equipos[i];
+		}
+        
+
+	}
+	return NULL;
+}
+
+
+void DestruirPartidos( tnodo * nodo){
+    
+ 
+    if ( nodo->sig == NULL) {
+        free(nodo->dato);
+        nodo->dato=NULL;
+        free(nodo);
+        nodo=NULL;
+    }
+    else DestruirPartidos( nodo->sig );
+    
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

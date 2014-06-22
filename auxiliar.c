@@ -11,10 +11,9 @@ size_t ValidarPartidos(tlista lista)
 	while (nodo&&validado)
 	{
 		lista = nodo->sig;
-		//brasil alemania alemania brasil
+		filaAux = 0;
 		while (lista&&validado)
 		{
-			filaAux = 0;
 			if (nodo->dato->idPartido == lista->dato->idPartido)
 				validado = 0;
 			char*nodoEquipo1=nodo->dato->equipo1->id;

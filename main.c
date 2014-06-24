@@ -28,21 +28,35 @@ int main(int argc, const char * argv[])
 
     tequipo * equipos=NULL;
     size_t cantEquipos;
-    tlista listaEquipos;
+    tlista listaPartidos;
+    tlista partidosJugados = NULL;
+    tpartido * partidoNodoJugado;
     
     cantEquipos=TraerEquipos(&equipos);
     
-    TraerPartidos(equipos,cantEquipos,&listaEquipos);
-    //RecorrerPartidos(listaEquipos);
+    TraerPartidos(equipos,cantEquipos,&listaPartidos);
+    
+    if (ValidarPartidos(listaPartidos))
+		//RecorrerPartidos(listaPartidos);
+    
+    
+    partidoNodoJugado = BuscarPartidoPorId( listaPartidos, 1 );
+    printf("%d\n",partidoNodoJugado->idPartido);
+    
+    intercambiarNodo(&listaPartidos, &partidosJugados, equipos, cantEquipos, partidoNodoJugado);
+	printf("Lista de partidos");
+	//RecorrerPartidos(listaPartidos);
+	printf("\nLista de partidos jugados");
+	RecorrerPartidos(partidosJugados);
+
+    
     
     
     //al salir guardamos la informacion antes de destruir la memoria
-    if( GrabarPartidosJugados( lista_jugados )==TRUE ){
-        return 1;
-    };
-    
-    
-    DestruirPartidos( listaEquipos );
+    //if( GrabarPartidosJugados( lista_jugados )==TRUE ){
+    //    return 1;
+    //};
+    DestruirPartidos( listaPartidos );
     DestruirEquipos(equipos);
     
     

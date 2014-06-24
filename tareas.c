@@ -214,6 +214,48 @@ void DestruirPartidos( tnodo * nodo){
     
 }
 
+t_bool ValidarPartidos(tlista lista)
+{
+	int validado = 1, fila = 0, filaAux=0;
+	tnodo* nodo = lista;
+    
+    
+	while ( nodo && validado ){
+        
+		lista = nodo->sig;
+        filaAux=0;
+		fila++;
+		while (lista&&validado)
+		{
+			if (nodo->dato->idPartido == lista->dato->idPartido)
+				validado = 0;
+			char*nodoEquipo1 = nodo->dato->equipo1->id;
+			char*nodoEquipo2 = nodo->dato->equipo2->id;
+			char*listaEquipo1 = lista->dato->equipo1->id;
+			char*listaEquipo2 = lista->dato->equipo2->id;
+            
+			if ( nodoEquipo1 && nodoEquipo2 && listaEquipo1 && listaEquipo2 )
+			{
+				if ((!strcmp(nodoEquipo1, listaEquipo1) && !strcmp(nodoEquipo2, listaEquipo2)) || (!strcmp(nodoEquipo1, listaEquipo2) && !strcmp(nodoEquipo2, listaEquipo1)))
+					validado = 0;
+			}
+			if (validado)
+				filaAux++;
+			lista = lista->sig;
+		}
+		nodo = nodo->sig;
+	}
+    
+	if (!validado){
+        
+    fprintf(stderr,"Error en la fila numero: %d \n", (fila + filaAux));
+    return TRUE;
+        
+	}
+    return FALSE;
+}
+
+
 
 
 // GRABACION DE ARCHIVOS BINARIOS
@@ -291,8 +333,77 @@ tpartido * BuscarPartidoPorEquipos (tlista lista, char * id1, char * id2 ){
 
 
 
+t_bool intercambiarNodo(tlista  *listapendientes, tlista *listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido){
+    
+	tnodo * partidoAeliminar = (*listapendientes);
+	tnodo * partidoAnterior = NULL;
+    
+	if ( partido )
+	{
+		while (partidoAeliminar)  // obtencion del nodo a eliminar y nodo anterior
+		{
+			if ( partidoAeliminar->dato->idPartido == partido->idPartido )
+			{
+				SwitchNodo(partidoAnterior, partidoAeliminar, listajugados); // pasa un nodo de una lista a la otra
+				return FALSE;
+			}
+			else
+			{
+				partidoAnterior = partidoAeliminar;
+				partidoAeliminar = partidoAeliminar->sig;
+			}
+		}
+	}
+
+    return TRUE;
+	
+}
 
 
+void  SwitchNodo(tlista partidoAnterior, tlista partidoAeliminar, tlista * listaJugados){
+    
+	tnodo * nodo = (*listaJugados);
+    
+	if (!partidoAnterior) //el nodo es el primero de la lista de pendientes porque el partidoAnterior queda en null.
+	{
+		if ( nodo )//el nodo va al final de la listaJugados
+		{
+            // llegamos al final de la lista
+			while (nodo){
+                nodo = nodo->sig;
+            }
+            // asignamos al sig del ultimo elemento el null.
+            nodo->sig = partidoAeliminar;
+            
+            // enganchamos el nodo al final de partidosJugados
+            partidoAeliminar=partidoAeliminar->sig;
+            
+            nodo->sig->sig = NULL;
+		}
+		else //el nodo corresponde al primer nodo de la lista de jugados porque sino seria null.
+		{
+			nodo = partidoAeliminar;
+            partidoAeliminar = partidoAeliminar->sig;
+			nodo->sig = NULL;
+		}
+		
+	}
+	else //
+	{
+		partidoAnterior->sig = partidoAeliminar->sig;
+		if (nodo)
+		{
+			while (nodo->sig)
+				nodo = nodo->sig;
+			nodo->sig = partidoAeliminar;
+		}
+		else
+			(*listaJugados) = partidoAeliminar;
+		partidoAeliminar->sig = NULL;
+	}
+    
+	
+}
 
 
 

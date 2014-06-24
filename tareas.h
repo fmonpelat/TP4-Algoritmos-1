@@ -72,6 +72,7 @@ void DestruirPartidos( tnodo * nodo); /*libera la memoria */
 void AgregarNodoEquipo( tnodo ** , tequipo* ,size_t , int , char * , char * , int , int , int );
 tequipo* BuscarEquipoPorId( tequipo * , char * , size_t );
 void RecorrerPartidos( tlista );
+t_bool ValidarPartidos(tlista lista);
 
 // validar unicos ids de partidos de la lista.
 
@@ -95,8 +96,8 @@ tpartido * BuscarPartidoPorId(tlista ,int );
 tpartido * BuscarPartidoPorEquipos (tlista ,char * ,char * );
 void TestBusquedaPartidos( tlista );
 
-
-
+void  SwitchNodo(tlista  partidoAnterior, tlista  partidoAeliminar, tlista * listaJugados);
+t_bool intercambiarNodo(tlista  * listapendientes, tlista * listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido);
 
 /*
 ModificarPartidosJugado

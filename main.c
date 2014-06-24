@@ -40,12 +40,15 @@ int main(int argc, const char * argv[])
 		//RecorrerPartidos(listaPartidos);
     
     
-    partidoNodoJugado = BuscarPartidoPorId( listaPartidos, 1 );
-    printf("%d\n",partidoNodoJugado->idPartido);
+    //partidoNodoJugado = BuscarPartidoPorId( listaPartidos, 2 );
+    //printf("%d\n",partidoNodoJugado->idPartido);
+    //intercambiarNodo(&listaPartidos, &partidosJugados, equipos, cantEquipos, partidoNodoJugado);
     
+    partidoNodoJugado = BuscarPartidoPorId( listaPartidos, 1 );
     intercambiarNodo(&listaPartidos, &partidosJugados, equipos, cantEquipos, partidoNodoJugado);
+
 	printf("Lista de partidos");
-	//RecorrerPartidos(listaPartidos);
+	RecorrerPartidos(listaPartidos);
 	printf("\nLista de partidos jugados");
 	RecorrerPartidos(partidosJugados);
 

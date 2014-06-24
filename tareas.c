@@ -333,7 +333,7 @@ tpartido * BuscarPartidoPorEquipos (tlista lista, char * id1, char * id2 ){
 
 
 
-t_bool intercambiarNodo(tlista  *listapendientes, tlista *listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido){
+t_bool intercambiarNodo(tlista  * listapendientes, tlista *listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido){
     
 	tnodo * partidoAeliminar = (*listapendientes);
 	tnodo * partidoAnterior = NULL;
@@ -347,11 +347,10 @@ t_bool intercambiarNodo(tlista  *listapendientes, tlista *listajugados, tequipo 
 				SwitchNodo(partidoAnterior, partidoAeliminar, listajugados); // pasa un nodo de una lista a la otra
 				return FALSE;
 			}
-			else
-			{
-				partidoAnterior = partidoAeliminar;
-				partidoAeliminar = partidoAeliminar->sig;
-			}
+            
+            partidoAnterior = partidoAeliminar;
+            partidoAeliminar = partidoAeliminar->sig;
+			
 		}
 	}
 
@@ -360,31 +359,36 @@ t_bool intercambiarNodo(tlista  *listapendientes, tlista *listajugados, tequipo 
 }
 
 
-void  SwitchNodo(tlista partidoAnterior, tlista partidoAeliminar, tlista * listaJugados){
+void  SwitchNodo(tnodo * partidoAnterior, tnodo * partidoAeliminar, tlista * listaJugados){
     
 	tnodo * nodo = (*listaJugados);
+    tnodo * aux;
     
 	if (!partidoAnterior) //el nodo es el primero de la lista de pendientes porque el partidoAnterior queda en null.
 	{
 		if ( nodo )//el nodo va al final de la listaJugados
 		{
             // llegamos al final de la lista
-			while (nodo){
+			while (nodo->sig){
                 nodo = nodo->sig;
             }
             // asignamos al sig del ultimo elemento el null.
             nodo->sig = partidoAeliminar;
             
             // enganchamos el nodo al final de partidosJugados
-            partidoAeliminar=partidoAeliminar->sig;
+            partidoAeliminar= partidoAeliminar->sig;
             
             nodo->sig->sig = NULL;
+         
+            
 		}
 		else //el nodo corresponde al primer nodo de la lista de jugados porque sino seria null.
 		{
-			nodo = partidoAeliminar;
+            aux=partidoAeliminar;
             partidoAeliminar = partidoAeliminar->sig;
-			nodo->sig = NULL;
+			nodo = aux;
+            nodo->sig=NULL;
+            (*listaJugados)=nodo;
 		}
 		
 	}
@@ -393,8 +397,8 @@ void  SwitchNodo(tlista partidoAnterior, tlista partidoAeliminar, tlista * lista
 		partidoAnterior->sig = partidoAeliminar->sig;
 		if (nodo)
 		{
-			while (nodo->sig)
-				nodo = nodo->sig;
+			while (nodo->sig) nodo = nodo->sig;
+            
 			nodo->sig = partidoAeliminar;
 		}
 		else

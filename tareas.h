@@ -96,7 +96,7 @@ tpartido * BuscarPartidoPorId(tlista ,int );
 tpartido * BuscarPartidoPorEquipos (tlista ,char * ,char * );
 void TestBusquedaPartidos( tlista );
 
-void  SwitchNodo(tlista  partidoAnterior, tlista  partidoAeliminar, tlista * listaJugados);
+void  SwitchNodo(tlista  partidoAnterior, tlista partidoAeliminar, tlista * listaJugados);
 t_bool intercambiarNodo(tlista  * listapendientes, tlista * listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido);
 
 /*

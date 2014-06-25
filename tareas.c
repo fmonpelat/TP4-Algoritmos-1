@@ -263,10 +263,11 @@ t_bool ValidarPartidos(tlista lista)
 t_bool GrabarPartidosJugados( tlista * lista_jugados ){
     
     FILE * fpPartidosJugados;
+    tlista aux;
     char NombreArchivo[M];
     strcpy(NombreArchivo, "partidosjugados.dat");
     
-    int buffer[M_ID-1];
+    int buffer[M_ID];
     
     
     fpPartidosJugados = fopen(NombreArchivo,"wb");
@@ -276,20 +277,58 @@ t_bool GrabarPartidosJugados( tlista * lista_jugados ){
         return TRUE;
     }
     
-    while ( !((*lista_jugados)->sig) ) {
+    aux=(*lista_jugados);
+    
+    while ( aux ) {
 
-        buffer[0] = (*lista_jugados)->dato->idPartido;
-        buffer[1] = (*lista_jugados)->dato->golesEq1;
-        buffer[1] = (*lista_jugados)->dato->golesEq2;
+        buffer[0] = aux->dato->idPartido;
+        buffer[1] = aux->dato->golesEq1;
+        buffer[2] = aux->dato->golesEq2;
         
-        fwrite(buffer, sizeof(int), sizeof(buffer), fpPartidosJugados);
-        
+        fwrite(buffer, sizeof(int),3 , fpPartidosJugados);
+        fflush(fpPartidosJugados);
+        aux=aux->sig;
     }
     
+    fclose(fpPartidosJugados);
     return FALSE;
     
 }
 
+t_bool leerPartidosJugados( tlista * listaJugados /*, tlista * listaPartidos, tequipo * equipos, size_t cantEquipos, tvectorPosiciones * tablaPos*/){
+    FILE * fpPartidosJugados;
+    //tlista * aux;
+    char NombreArchivo[M];
+    strcpy(NombreArchivo, "partidosjugados.dat");
+    
+    int buffer;
+    
+    fpPartidosJugados = fopen(NombreArchivo,"rb");
+    
+    if (!fpPartidosJugados) {
+        fprintf(stderr, "Error, no se pudo abrir %s",NombreArchivo);
+        return TRUE;
+    }
+
+    while (  fread(&buffer,sizeof(int),1,fpPartidosJugados) ) {
+        printf("%d ",buffer);
+        fread(&buffer,sizeof(int),1,fpPartidosJugados);
+        printf("%d ",buffer);
+        fread(&buffer,sizeof(int),1,fpPartidosJugados);
+        printf("%d \n",buffer);
+
+      /*
+       la funcion de erik hace preguntas al usuario y no me sirve para usarla en este caso ...
+        if ( PartidoJugadoNuevo('i', listaPartidos, listaJugados, equipos, cantEquipos, tablaPos) == TRUE){
+            fprintf(stderr, "Error al agregar partido jugado ante la carga de %s",NombreArchivo);
+            return TRUE;
+            
+        }
+       */
+    }
+    return FALSE;
+    
+}
 
 
 
@@ -332,87 +371,271 @@ tpartido * BuscarPartidoPorEquipos (tlista lista, char * id1, char * id2 ){
 }
 
 
-
-t_bool intercambiarNodo(tlista  * listapendientes, tlista *listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido){
+void  SwitchNodo(tlista * partidoAnterior, tlista * partidoAeliminar, tlista * listaJugados)
+{
+	tnodo * nodo = (*listaJugados);
+	tnodo * aux = NULL;
+	if (!(*partidoAnterior))//el nodo es el primero de la lista de pendientes
+	{
+		aux = (*partidoAeliminar);
+		(*partidoAeliminar) = (*partidoAeliminar)->sig;
+		if (nodo)
+		{
+			while (nodo->sig)
+				nodo = nodo->sig;
+			nodo->sig = aux;
+			nodo->sig->sig = NULL;
+		}
+		else //el nodo no existe
+		{
+			(*listaJugados) = aux;
+			(*listaJugados)->sig = NULL;
+		}
+        
+		//aux->sig = NULL;
+	}
+	else
+	{
+		(*partidoAnterior)->sig = (*partidoAeliminar)->sig;
+		if (nodo)
+		{
+			while (nodo->sig)
+				nodo = nodo->sig;
+			nodo->sig = (*partidoAeliminar);
+		}
+		else
+			(*listaJugados) = (*partidoAeliminar);
+		(*partidoAeliminar)->sig = NULL;
+	}
     
+}
+
+
+t_bool intercambiarNodo(tlista  *listapendientes, tlista *listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido) //
+{
 	tnodo * partidoAeliminar = (*listapendientes);
 	tnodo * partidoAnterior = NULL;
     
-	if ( partido )
-	{
-		while (partidoAeliminar)  // obtencion del nodo a eliminar y nodo anterior
-		{
-			if ( partidoAeliminar->dato->idPartido == partido->idPartido )
-			{
-				SwitchNodo(partidoAnterior, partidoAeliminar, listajugados); // pasa un nodo de una lista a la otra
+	if (!partido) return TRUE;
+	
+    while (partidoAeliminar)  // obtencion del nodo a eliminar y nodo anterior
+    {
+        if (partidoAeliminar->dato->idPartido == partido->idPartido){
+                
+            SwitchNodo(&partidoAnterior, &partidoAeliminar, listajugados);// pasa un nodo de una lista a la otra
+            if (!partidoAnterior){
+                (*listapendientes) = partidoAeliminar;
 				return FALSE;
 			}
-            
-            partidoAnterior = partidoAeliminar;
-            partidoAeliminar = partidoAeliminar->sig;
-			
+			else {
+				partidoAnterior = partidoAeliminar;
+				partidoAeliminar = partidoAeliminar->sig;
+			}
 		}
 	}
-
     return TRUE;
-	
 }
 
 
-void  SwitchNodo(tnodo * partidoAnterior, tnodo * partidoAeliminar, tlista * listaJugados){
-    
-	tnodo * nodo = (*listaJugados);
-    tnodo * aux;
-    
-	if (!partidoAnterior) //el nodo es el primero de la lista de pendientes porque el partidoAnterior queda en null.
+t_bool PartidoJugadoNuevo(char opcion, tlista * partidosPendientes, tlista * partidosJugados, tequipo * equipos, size_t qEquipos, tvectorPosiciones * tablaPos)
+{
+	tpartido *partido;
+	t_bool error = FALSE;
+	char  id1[M_ID], id2[M_ID];
+	int id;
+	if (opcion == 'i')
 	{
-		if ( nodo )//el nodo va al final de la listaJugados
+		puts("Introduzca el id del partido");
+		scanf("%d", &id);
+		fflush(stdin);
+		partido = BuscarPartidoPorId((*partidosPendientes), id);
+		if (!partido)
 		{
-            // llegamos al final de la lista
-			while (nodo->sig){
-                nodo = nodo->sig;
-            }
-            // asignamos al sig del ultimo elemento el null.
-            nodo->sig = partidoAeliminar;
-            
-            // enganchamos el nodo al final de partidosJugados
-            partidoAeliminar= partidoAeliminar->sig;
-            
-            nodo->sig->sig = NULL;
-         
-            
+			partido = BuscarPartidoPorId((*partidosJugados), id);
+			if (partido)
+				puts("Ese partido ya se jugo");
+			else
+				puts("Ese partido es invalido");
+			error = TRUE;
 		}
-		else //el nodo corresponde al primer nodo de la lista de jugados porque sino seria null.
-		{
-            aux=partidoAeliminar;
-            partidoAeliminar = partidoAeliminar->sig;
-			nodo = aux;
-            nodo->sig=NULL;
-            (*listaJugados)=nodo;
-		}
-		
 	}
-	else //
+	else if (opcion == 'e')
 	{
-		partidoAnterior->sig = partidoAeliminar->sig;
-		if (nodo)
+		puts("Introduzca el id del equipo1");
+		gets(id1);
+		puts("Introduzca el id del equipo1");
+		gets(id2);
+		partido = BuscarPartidoPorEquipos((*partidosPendientes), id1, id2);
+		if (!partido)
 		{
-			while (nodo->sig) nodo = nodo->sig;
-            
-			nodo->sig = partidoAeliminar;
+			partido = BuscarPartidoPorEquipos((*partidosJugados), id1, id2);
+			if (partido)
+				puts("Esos equipos ya jugaron");
+			else
+				puts("Ese partido es invalido");
+			error = TRUE;
+		}
+        
+	}
+	if (error == FALSE)
+	{
+		printf("Introduzca los goles de %s: \n", partido->equipo1->nombre);
+		scanf("%d", &partido->golesEq1);
+		printf("Introduzca los goles de %s: \n", partido->equipo2->nombre);
+		scanf("%d", &partido->golesEq2);
+		fflush(stdin);
+		intercambiarNodo(&(*partidosPendientes), &(*partidosJugados), equipos, qEquipos, partido);
+	}
+	ActualizarPuntosEquipos(tablaPos, partido);
+    
+	return error;
+}
+
+
+void RecorrerTablaPos(tvectorPosiciones *tablaPos)
+{
+	int i = 0, gf, gc, dg;
+	tequipoPos* equipoT = NULL;
+    printf("     EQUIPO  PTS PG PE PP GF GC DF\n");
+	while ((*tablaPos)[i])
+	{
+		equipoT = (*tablaPos)[i];
+		gf = equipoT->golesFavor;
+		gc = equipoT->golesContra;
+		dg = gf - gc;
+		printf("%10s     %d  %d  %d  %d  %d  %d  %d\n", equipoT->equipo->nombre, equipoT->puntos,equipoT->partidosGanados,equipoT->partidosEmpatados,equipoT->partidosPerdidos,gf,gc,dg);
+		i++;
+	}
+}
+
+/*
+OrdenarTablaPos(tvectorPosiciones *tablaPos)
+{
+    
+    
+    
+}
+ 
+*/
+
+tequipoPos * BuscarEquipoPorIdEnTabla(tvectorPosiciones * equiposEnTabla, char * id){
+    
+	size_t i = 0;
+	if ((*equiposEnTabla))
+	{
+		while ((*equiposEnTabla)[i])
+		{
+			if (id == (*equiposEnTabla)[i]->equipo->id)
+				return (*equiposEnTabla)[i];
+			i++;
+		}
+	}
+    
+	return NULL;
+}
+
+t_bool AgregarEquipoPos(tvectorPosiciones *vec, tequipo*equipo)
+{
+	int i = 0;
+	/*tvectorPosiciones* vec = NULL;
+     vec = &(*(*tablaPos));*/
+    
+	if ((*vec))
+	{
+        
+		while ((*vec)[i])
+			i++;
+		(*vec) = realloc((*vec), sizeof(tequipoPos*)*(i + 2)); //(mas el null mas el nuevo)
+		(*vec)[i] = (tequipoPos*)malloc(sizeof(tequipoPos)* 1);
+		(*vec)[i]->equipo = equipo;
+		(*vec)[i]->grupo = equipo->id[0];
+		(*vec)[i]->puntos = 0;
+		(*vec)[i]->golesContra = 0;
+		(*vec)[i]->golesFavor = 0;
+		(*vec)[i]->partidosEmpatados = 0;
+		(*vec)[i]->partidosGanados = 0;
+		(*vec)[i]->partidosJugados = 0;
+		(*vec)[i]->partidosPerdidos = 0;
+		(*vec)[i + 1] = NULL;
+        return FALSE;
+	}
+	else
+	{
+		(*vec) = (tequipoPos**)malloc(sizeof(tequipoPos*)* 1);
+		(*vec)[0] = (tequipoPos*)malloc(sizeof(tequipoPos)* 2);
+		(*vec)[0]->equipo = equipo;
+		(*vec)[0]->grupo = equipo->id[0];
+		(*vec)[0]->puntos = 0;
+		(*vec)[0]->golesContra = 0;
+		(*vec)[0]->golesFavor = 0;
+		(*vec)[0]->partidosEmpatados = 0;
+		(*vec)[0]->partidosGanados = 0;
+		(*vec)[0]->partidosJugados = 0;
+		(*vec)[0]->partidosPerdidos = 0;
+		(*vec)[1] = NULL;
+        return FALSE;
+	}
+    
+    return TRUE;
+    
+}
+
+t_bool ActualizarPuntosEquipos(tvectorPosiciones * tablaPos, tpartido*partido)
+{
+	tequipoPos * eqq = NULL;
+	t_bool error = FALSE;
+	tequipoPos* eq1, *eq2;
+	eq1 = BuscarEquipoPorIdEnTabla(tablaPos, partido->equipo1->id);
+	eq2 = BuscarEquipoPorIdEnTabla(tablaPos, partido->equipo2->id);
+    
+	if (!eq1)
+		AgregarEquipoPos(tablaPos, partido->equipo1);
+	if (!eq2)
+		AgregarEquipoPos(tablaPos, partido->equipo2);
+    
+	eq1 = BuscarEquipoPorIdEnTabla(tablaPos, partido->equipo1->id);
+	eq2 = BuscarEquipoPorIdEnTabla(tablaPos, partido->equipo2->id);
+    
+	eqq=*tablaPos[1];
+	if (eq1&&eq2)
+	{
+		eq1->equipo = partido->equipo1;
+		eq1->golesContra = partido->golesEq2;
+		eq1->golesFavor = partido->golesEq1;
+		eq1->partidosJugados++;
+        
+		eq2->equipo = partido->equipo2;
+		eq2->golesContra = partido->golesEq1;
+		eq2->golesFavor = partido->golesEq2;
+		eq2->partidosJugados++;
+        
+		if (partido->golesEq1 == partido->golesEq2)
+		{
+			eq1->partidosEmpatados++;
+			eq2->partidosEmpatados++;
+			eq1->puntos++;
+			eq2->puntos++;
+		}
+		else if (partido->golesEq1 > partido->golesEq2)
+		{
+			eq1->partidosGanados++;
+			eq2->partidosPerdidos++;
+			eq1->puntos = eq1->puntos + 3;
 		}
 		else
-			(*listaJugados) = partidoAeliminar;
-		partidoAeliminar->sig = NULL;
+		{
+			eq1->partidosPerdidos++;
+			eq2->partidosGanados++;
+			eq2->puntos = eq1->puntos + 3;
+		}
+        
+		//OrdenarTablaPos(tablaPos);
+        
 	}
+	else
+		error = TRUE;
     
-	
+	return error;
 }
-
-
-
-
-
-
 
 

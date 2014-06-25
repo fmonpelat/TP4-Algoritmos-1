@@ -22,43 +22,61 @@ int main(int argc, const char * argv[])
 {
 
     
-    //TestEquipos();
-    //TestTraerPartidos();
+	//TestEquipos();
+	//TestTraerPartidos();
+	tvectorPosiciones tablaPos = NULL;
+	tequipo * equipos = NULL;
+	size_t cantEquipos;
+	tlista listaPartidos;
+	tlista partidosJugados = NULL;
+	cantEquipos = TraerEquipos(&equipos);
     
+	TraerPartidos(equipos, cantEquipos, &listaPartidos);
+    
+	if (ValidarPartidos(listaPartidos))
+		RecorrerPartidos(listaPartidos);
 
-    tequipo * equipos=NULL;
-    size_t cantEquipos;
-    tlista listaPartidos;
-    tlista partidosJugados = NULL;
-    tpartido * partidoNodoJugado;
-    
-    cantEquipos=TraerEquipos(&equipos);
-    
-    TraerPartidos(equipos,cantEquipos,&listaPartidos);
-    
-    if (ValidarPartidos(listaPartidos))
-		//RecorrerPartidos(listaPartidos);
-    
-    
-    //partidoNodoJugado = BuscarPartidoPorId( listaPartidos, 2 );
-    //printf("%d\n",partidoNodoJugado->idPartido);
-    //intercambiarNodo(&listaPartidos, &partidosJugados, equipos, cantEquipos, partidoNodoJugado);
-    
-    partidoNodoJugado = BuscarPartidoPorId( listaPartidos, 1 );
-    intercambiarNodo(&listaPartidos, &partidosJugados, equipos, cantEquipos, partidoNodoJugado);
+    // En Desarrollo ...
+    //leerPartidosJugados(&partidosJugados);
 
-	printf("Lista de partidos");
-	RecorrerPartidos(listaPartidos);
-	printf("\nLista de partidos jugados");
-	RecorrerPartidos(partidosJugados);
+	/*tablaPos = (tequipoPos**)malloc(sizeof(tequipoPos*));
+     tablaPos[0] = NULL;*/
+	if ( PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, &tablaPos) == FALSE)
+	{
+		printf("Lista de partidos \n");
+		RecorrerPartidos(listaPartidos);
+		printf("Lista de partidos jugados \n");
+		RecorrerPartidos(partidosJugados);
+		printf("Lista de posiciones \n");
+		RecorrerTablaPos(&tablaPos);
+	}
+    
+	if (PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, &tablaPos) == FALSE)
+	{
+		printf("Lista de partidos \n");
+		RecorrerPartidos(listaPartidos);
+		printf("Lista de partidos jugados \n");
+		RecorrerPartidos(partidosJugados);
+		printf("Lista de posiciones \n");
+		RecorrerTablaPos(&tablaPos);
+	}
+    
+	if (PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, &tablaPos) == FALSE)
+	{
+		printf("Lista de partidos \n");
+		RecorrerPartidos(listaPartidos);
+		printf("Lista de partidos jugados \n");
+		RecorrerPartidos(partidosJugados);
+		printf("Lista de posiciones \n");
+		RecorrerTablaPos(&tablaPos);
+	}
 
-    
-    
-    
-    //al salir guardamos la informacion antes de destruir la memoria
-    //if( GrabarPartidosJugados( lista_jugados )==TRUE ){
-    //    return 1;
-    //};
+
+    //En Desarrollo falta verificar que esta guardando me esta guardando las cosas como:
+    if( GrabarPartidosJugados( &partidosJugados )==TRUE ){
+        return 1;
+    };
+ 
     DestruirPartidos( listaPartidos );
     DestruirEquipos(equipos);
     

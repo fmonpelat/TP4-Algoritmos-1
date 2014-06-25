@@ -28,7 +28,7 @@ typedef struct fecha{
 int dd;
 int mm;
 int aaaa;
-}tfecha;
+} tfecha;
 
 typedef struct partido{
 int idPartido;
@@ -37,12 +37,12 @@ tequipo* equipo2;
 int golesEq1;
 int golesEq2;
 tfecha fecha;
-}tpartido;
+} tpartido;
 
 typedef struct nodo{
 tpartido* dato;
 struct nodo* sig;
-}tnodo;
+} tnodo;
 
 typedef tnodo* tlista;
 
@@ -51,7 +51,23 @@ int q_equipos;
 tequipo ** equipos;
 tlista partidosJugados;
 tlista partidosPendientes;
-}tmundial;
+} tmundial;
+
+// estructura creadas
+
+typedef struct equipoPosicion{
+char grupo;
+tequipo * equipo;
+int puntos;
+int partidosJugados;
+int partidosGanados;
+int partidosEmpatados;
+int partidosPerdidos;
+int golesFavor;
+int golesContra;
+} tequipoPos;
+
+typedef tequipoPos ** tvectorPosiciones;
 
 //FACU
 //EQUIPOS DONE
@@ -70,7 +86,7 @@ size_t TraerPartidos( tequipo * ,size_t , tlista * );
 void TestTraerPartidos( void );
 void DestruirPartidos( tnodo * nodo); /*libera la memoria */
 void AgregarNodoEquipo( tnodo ** , tequipo* ,size_t , int , char * , char * , int , int , int );
-tequipo* BuscarEquipoPorId( tequipo * , char * , size_t );
+tequipo * BuscarEquipoPorId( tequipo * , char * , size_t );
 void RecorrerPartidos( tlista );
 t_bool ValidarPartidos(tlista lista);
 
@@ -84,7 +100,7 @@ t_bool GrabarPartidosJugados( tlista * );
 
 
 // leer partidos
-
+t_bool leerPartidosJugados( tlista * );
 
 
 
@@ -96,8 +112,13 @@ tpartido * BuscarPartidoPorId(tlista ,int );
 tpartido * BuscarPartidoPorEquipos (tlista ,char * ,char * );
 void TestBusquedaPartidos( tlista );
 
-void  SwitchNodo(tlista  partidoAnterior, tlista partidoAeliminar, tlista * listaJugados);
+void  SwitchNodo(tlista  * , tlista * , tlista * );
 t_bool intercambiarNodo(tlista  * listapendientes, tlista * listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido);
+t_bool PartidoJugadoNuevo(char , tlista * , tlista * , tequipo * , size_t , tvectorPosiciones * );
+tequipoPos * BuscarEquipoPorIdEnTabla(tvectorPosiciones * , char * );
+t_bool AgregarEquipoPos(tvectorPosiciones * vec, tequipo * equipo);
+t_bool ActualizarPuntosEquipos(tvectorPosiciones * tablaPos, tpartido * partido);
+void RecorrerTablaPos(tvectorPosiciones *tablaPos);
 
 /*
 ModificarPartidosJugado

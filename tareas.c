@@ -402,6 +402,7 @@ void  SwitchNodo(tlista * partidoAnterior, tlista * partidoAeliminar, tlista * l
 			while (nodo->sig)
 				nodo = nodo->sig;
 			nodo->sig = (*partidoAeliminar);
+            nodo->sig->sig=NULL;
 		}
 		else
 			(*listaJugados) = (*partidoAeliminar);
@@ -429,9 +430,10 @@ t_bool intercambiarNodo(tlista  *listapendientes, tlista *listajugados, tequipo 
 			}
 			else {
 				partidoAnterior = partidoAeliminar;
-				partidoAeliminar = partidoAeliminar->sig;
+				
 			}
 		}
+    partidoAeliminar = partidoAeliminar->sig;
 	}
     return TRUE;
 }
@@ -481,9 +483,10 @@ t_bool PartidoJugadoNuevo(char opcion, tlista * partidosPendientes, tlista * par
 	{
 		printf("Introduzca los goles de %s: \n", partido->equipo1->nombre);
 		scanf("%d", &partido->golesEq1);
+        dump_line(stdin);
 		printf("Introduzca los goles de %s: \n", partido->equipo2->nombre);
 		scanf("%d", &partido->golesEq2);
-		fflush(stdin);
+		dump_line(stdin);
 		intercambiarNodo(&(*partidosPendientes), &(*partidosJugados), equipos, qEquipos, partido);
 	}
 	ActualizarPuntosEquipos(tablaPos, partido);

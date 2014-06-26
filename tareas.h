@@ -76,7 +76,7 @@ void TestEquipos( void );
 void DestruirEquipos(tequipo*); /*libera la memoria */
 
 /* AUX compatibilidad macosx simil fflush. */
-/*void dump_line(FILE *);*/
+void dump_line(FILE *);
 
 
 

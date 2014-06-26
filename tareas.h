@@ -65,6 +65,7 @@ int partidosEmpatados;
 int partidosPerdidos;
 int golesFavor;
 int golesContra;
+int golesDif;
 } tequipoPos;
 
 typedef tequipoPos ** tvectorPosiciones;
@@ -116,9 +117,11 @@ void  SwitchNodo(tlista  * , tlista * , tlista * );
 t_bool intercambiarNodo(tlista  * listapendientes, tlista * listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido);
 t_bool PartidoJugadoNuevo(char , tlista * , tlista * , tequipo * , size_t , tvectorPosiciones * );
 tequipoPos * BuscarEquipoPorIdEnTabla(tvectorPosiciones * , char * );
-t_bool AgregarEquipoPos(tvectorPosiciones * vec, tequipo * equipo);
+tvectorPosiciones * CrearVecPosiciones(tequipo* equipos, int qEquipos);
 t_bool ActualizarPuntosEquipos(tvectorPosiciones * tablaPos, tpartido * partido);
 void RecorrerTablaPos(tvectorPosiciones *tablaPos);
+void OrdenarTablaPos(tvectorPosiciones *tablaPos);
+void IntercambiarVecPos(tequipoPos** equipo1, tequipoPos** equipo2);
 
 /*
 ModificarPartidosJugado

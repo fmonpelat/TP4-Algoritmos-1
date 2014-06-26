@@ -17,130 +17,130 @@
 
 
 void dump_line(FILE *fp) {
-    int ch;
-    while ( (ch = fgetc(fp)) != EOF && ch != '\n');
+	int ch;
+	while ((ch = fgetc(fp)) != EOF && ch != '\n');
 }
 
 
 
 
-size_t TraerEquipos( tequipo **  equipos ){
-    
-    if ( (*equipos)!=NULL ) {
-        fprintf(stderr, "Error, por favor ingrese un puntero equipo nulo");
-        return 0;
-    }
-    
-    tequipo * aux=NULL;
-    size_t used_size=0;
-    size_t alloc_size=0,init_chop=2,chop_size=4;
-    FILE * fpequipos;
-    size_t i=0;
-    char str[M_ID+M];
-    char * pstr;
-    char* pstr2;
+size_t TraerEquipos(tequipo **  equipos){
 
-    if (  !( fpequipos = fopen("grupos.txt", "r") )  ){
-        fprintf(stderr, "Error, no se pudo abrir grupos.txt, existe?");
-        return 0;
-    }
-    
-    /* pedimos memoria por primera vez antes de reallocar si es que necesitamos memoria.
-     */
-    if (  !( *equipos = (tequipo*)malloc( sizeof(tequipo)*init_chop) )  ) {
-        fprintf(stderr, "Error, could not find memory");
-        return 0;
-    }
-    
-    alloc_size=init_chop;
-    
-    while ( fgets(str, M_ID+M+1 , fpequipos) ){
-        
-        /* nos preguntamos si necesitamos memoria ... pedimos de a chops o de a pedazos
-         */
-        if ( used_size == alloc_size ) {
-        
-            if (  !( aux = (tequipo *)realloc(*equipos, sizeof(tequipo)*( alloc_size+chop_size) ))  ) {
-                fprintf(stderr, "Error, could not find memory");
-                free(*equipos);
-                *equipos=NULL;
-                return 0;
-            }
-            *equipos=aux;
-            alloc_size+=chop_size;
-            i++;
-            /* debugging alloc size callouts
-            printf("counter:%lu alloc:%lu chop_size:%lu\n",i,alloc_size,chop_size);
-            */
-        }
-        
-        pstr = strtok(str,";");
-        if ( pstr ) strcpy ( (*equipos)[used_size].id , pstr);
-        
-        pstr = strtok(NULL,";");
-        pstr2 = strtok(pstr,"\r\n");
-       
-        if( pstr2 ) strcpy( (*equipos)[used_size].nombre, pstr2);
-        
-        used_size++;
-        
-    }
-    
-    fclose(fpequipos);
-    // para debug sacar despues de pasar las pruebas
-    //printf("%s\n",equipos[1].nombre);
-    //printf("%s\n",equipos[1].id);
-    
-    return used_size-1;
+	if ((*equipos) != NULL) {
+		fprintf(stderr, "Error, por favor ingrese un puntero equipo nulo");
+		return 0;
+	}
+
+	tequipo * aux = NULL;
+	size_t used_size = 0;
+	size_t alloc_size = 0, init_chop = 2, chop_size = 4;
+	FILE * fpequipos;
+	size_t i = 0;
+	char str[M_ID + M];
+	char * pstr;
+	char* pstr2;
+
+	if (!(fpequipos = fopen("grupos.txt", "r"))){
+		fprintf(stderr, "Error, no se pudo abrir grupos.txt, existe?");
+		return 0;
+	}
+
+	/* pedimos memoria por primera vez antes de reallocar si es que necesitamos memoria.
+	 */
+	if (!(*equipos = (tequipo*)malloc(sizeof(tequipo)*init_chop))) {
+		fprintf(stderr, "Error, could not find memory");
+		return 0;
+	}
+
+	alloc_size = init_chop;
+
+	while (fgets(str, M_ID + M + 1, fpequipos)){
+
+		/* nos preguntamos si necesitamos memoria ... pedimos de a chops o de a pedazos
+		 */
+		if (used_size == alloc_size) {
+
+			if (!(aux = (tequipo *)realloc(*equipos, sizeof(tequipo)*(alloc_size + chop_size)))) {
+				fprintf(stderr, "Error, could not find memory");
+				free(*equipos);
+				*equipos = NULL;
+				return 0;
+			}
+			*equipos = aux;
+			alloc_size += chop_size;
+			i++;
+			/* debugging alloc size callouts
+			printf("counter:%lu alloc:%lu chop_size:%lu\n",i,alloc_size,chop_size);
+			*/
+		}
+
+		pstr = strtok(str, ";");
+		if (pstr) strcpy((*equipos)[used_size].id, pstr);
+
+		pstr = strtok(NULL, ";");
+		pstr2 = strtok(pstr, "\r\n");
+
+		if (pstr2) strcpy((*equipos)[used_size].nombre, pstr2);
+
+		used_size++;
+
+	}
+
+	fclose(fpequipos);
+	// para debug sacar despues de pasar las pruebas
+	//printf("%s\n",equipos[1].nombre);
+	//printf("%s\n",equipos[1].id);
+
+	return used_size - 1;
 }
 
 
-void DestruirEquipos( tequipo * equipos){
-    
-    free(equipos);
+void DestruirEquipos(tequipo * equipos){
+
+	free(equipos);
 
 }
 
 // ########## ERIK ######################################
 
 
-size_t TraerPartidos( tequipo * equipos,size_t sizeEquipos, tlista * lista)
+size_t TraerPartidos(tequipo * equipos, size_t sizeEquipos, tlista * lista)
 {
-    //aca hacemos que lo apuntado por lista que es un tnodo * sea null.
+	//aca hacemos que lo apuntado por lista que es un tnodo * sea null.
 	(*lista) = NULL;
 	FILE * fileReader;
-    
-    
-	if (  !(fileReader = fopen("partidos.txt", "r"))  )
+
+
+	if (!(fileReader = fopen("partidos.txt", "r")))
 	{
 		puts("No existe el archivo partidos.txt");
 		return 1;
 	}
-    
+
 	while (!feof(fileReader))
 	{
-        
-        
+
+
 		int idPartido = 0;
 		char idEquipo1[M_ID];
 		char idEquipo2[M_ID];
 		int dia = 0, mes = 0, anio = 0;
 		/*Parseo segun el formato de partidos.txt*/
-		fscanf(fileReader, "%d;%2c;%2c;%d/%d/%d\n", &idPartido, (char * )&idEquipo1, (char *)&idEquipo2, &dia, &mes, &anio);
-        
+		fscanf(fileReader, "%d;%2c;%2c;%d/%d/%d\n", &idPartido, (char *)&idEquipo1, (char *)&idEquipo2, &dia, &mes, &anio);
+
 		idEquipo1[2] = '\0';
 		idEquipo2[2] = '\0';
 		/*Agrego,por linea, un nodo  a la lista */
 		AgregarNodoEquipo(&(*lista), equipos, sizeEquipos, idPartido, idEquipo1, idEquipo2, dia, mes, anio);
 	}
-    
+
 	/*Le asigno la cadena a la lista*/
 	//(*lista) = aux;
-    
+
 	return 1;
 }
 
-void AgregarNodoEquipo(tnodo ** nodo, tequipo* equipos,size_t sizeEquipos, int idPartido, char * idEquipo1, char * idEquipo2, int dia, int mes, int anio)
+void AgregarNodoEquipo(tnodo ** nodo, tequipo* equipos, size_t sizeEquipos, int idPartido, char * idEquipo1, char * idEquipo2, int dia, int mes, int anio)
 {
 	if (!(*nodo))
 	{
@@ -150,8 +150,8 @@ void AgregarNodoEquipo(tnodo ** nodo, tequipo* equipos,size_t sizeEquipos, int i
 		(*nodo)->dato->idPartido = idPartido;
 		(*nodo)->dato->equipo1 = BuscarEquipoPorId(equipos, idEquipo1, sizeEquipos);
 		(*nodo)->dato->equipo2 = BuscarEquipoPorId(equipos, idEquipo2, sizeEquipos);
-        (*nodo)->dato->golesEq1=0;
-        (*nodo)->dato->golesEq2=0;
+		(*nodo)->dato->golesEq1 = 0;
+		(*nodo)->dato->golesEq2 = 0;
 		(*nodo)->dato->fecha.dd = dia;
 		(*nodo)->dato->fecha.mm = mes;
 		(*nodo)->dato->fecha.aaaa = anio;
@@ -161,7 +161,7 @@ void AgregarNodoEquipo(tnodo ** nodo, tequipo* equipos,size_t sizeEquipos, int i
 	{
 		AgregarNodoEquipo(&(*nodo)->sig, equipos, sizeEquipos, idPartido, idEquipo1, idEquipo2, dia, mes, anio);
 	}
-    
+
 }
 
 void RecorrerPartidos(tlista lista)
@@ -170,60 +170,60 @@ void RecorrerPartidos(tlista lista)
 	{
 		if (lista->dato->idPartido)
 			printf("%d", lista->dato->idPartido);
-        
+
 		if (lista->dato->fecha.dd && lista->dato->fecha.mm && lista->dato->fecha.aaaa)
 			printf(" (%d/%d/%d) ", lista->dato->fecha.dd, lista->dato->fecha.mm, lista->dato->fecha.aaaa);
-        
+
 		if (lista->dato->equipo1 && lista->dato->equipo2)
 			printf("Equipo1: %s, Equipo2: %s", lista->dato->equipo1->nombre, lista->dato->equipo2->nombre);
 		puts("");
-        
+
 		lista = lista->sig;
 	}
-    
+
 }
 
-tequipo * BuscarEquipoPorId(tequipo * equipos, char * id , size_t size){
-    
-    size_t i;
-    
-    for (i=0; i!=size; i++) {
-    
-		if ( !strcmp(equipos[i].id, id) )
+tequipo * BuscarEquipoPorId(tequipo * equipos, char * id, size_t size){
+
+	size_t i;
+
+	for (i = 0; i != size; i++) {
+
+		if (!strcmp(equipos[i].id, id))
 		{
 			return &equipos[i];
 		}
-        
+
 
 	}
 	return NULL;
 }
 
 
-void DestruirPartidos( tnodo * nodo){
-    
- 
-    if ( nodo->sig == NULL) {
-        free(nodo->dato);
-        nodo->dato=NULL;
-        free(nodo);
-        nodo=NULL;
-    }
-    else DestruirPartidos( nodo->sig );
-    
-    
+void DestruirPartidos(tnodo * nodo){
+
+
+	if (nodo->sig == NULL) {
+		free(nodo->dato);
+		nodo->dato = NULL;
+		free(nodo);
+		nodo = NULL;
+	}
+	else DestruirPartidos(nodo->sig);
+
+
 }
 
 t_bool ValidarPartidos(tlista lista)
 {
-	int validado = 1, fila = 0, filaAux=0;
+	int validado = 1, fila = 0, filaAux = 0;
 	tnodo* nodo = lista;
-    
-    
-	while ( nodo && validado ){
-        
+
+
+	while (nodo && validado){
+
 		lista = nodo->sig;
-        filaAux=0;
+		filaAux = 0;
 		fila++;
 		while (lista&&validado)
 		{
@@ -233,8 +233,8 @@ t_bool ValidarPartidos(tlista lista)
 			char*nodoEquipo2 = nodo->dato->equipo2->id;
 			char*listaEquipo1 = lista->dato->equipo1->id;
 			char*listaEquipo2 = lista->dato->equipo2->id;
-            
-			if ( nodoEquipo1 && nodoEquipo2 && listaEquipo1 && listaEquipo2 )
+
+			if (nodoEquipo1 && nodoEquipo2 && listaEquipo1 && listaEquipo2)
 			{
 				if ((!strcmp(nodoEquipo1, listaEquipo1) && !strcmp(nodoEquipo2, listaEquipo2)) || (!strcmp(nodoEquipo1, listaEquipo2) && !strcmp(nodoEquipo2, listaEquipo1)))
 					validado = 0;
@@ -245,14 +245,14 @@ t_bool ValidarPartidos(tlista lista)
 		}
 		nodo = nodo->sig;
 	}
-    
+
 	if (!validado){
-        
-    fprintf(stderr,"Error en la fila numero: %d \n", (fila + filaAux));
-    return TRUE;
-        
+
+		fprintf(stderr, "Error en la fila numero: %d \n", (fila + filaAux));
+		return TRUE;
+
 	}
-    return FALSE;
+	return FALSE;
 }
 
 
@@ -260,74 +260,74 @@ t_bool ValidarPartidos(tlista lista)
 
 // GRABACION DE ARCHIVOS BINARIOS
 
-t_bool GrabarPartidosJugados( tlista * lista_jugados ){
-    
-    FILE * fpPartidosJugados;
-    tlista aux;
-    char NombreArchivo[M];
-    strcpy(NombreArchivo, "partidosjugados.dat");
-    
-    int buffer[M_ID];
-    
-    
-    fpPartidosJugados = fopen(NombreArchivo,"wb");
-    
-    if (!fpPartidosJugados) {
-        fprintf(stderr, "Error, no se pudo abrir %s",NombreArchivo);
-        return TRUE;
-    }
-    
-    aux=(*lista_jugados);
-    
-    while ( aux ) {
+t_bool GrabarPartidosJugados(tlista * lista_jugados){
 
-        buffer[0] = aux->dato->idPartido;
-        buffer[1] = aux->dato->golesEq1;
-        buffer[2] = aux->dato->golesEq2;
-        
-        fwrite(buffer, sizeof(int),3 , fpPartidosJugados);
-        fflush(fpPartidosJugados);
-        aux=aux->sig;
-    }
-    
-    fclose(fpPartidosJugados);
-    return FALSE;
-    
+	FILE * fpPartidosJugados;
+	tlista aux;
+	char NombreArchivo[M];
+	strcpy(NombreArchivo, "partidosjugados.dat");
+
+	int buffer[M_ID];
+
+
+	fpPartidosJugados = fopen(NombreArchivo, "wb");
+
+	if (!fpPartidosJugados) {
+		fprintf(stderr, "Error, no se pudo abrir %s", NombreArchivo);
+		return TRUE;
+	}
+
+	aux = (*lista_jugados);
+
+	while (aux) {
+
+		buffer[0] = aux->dato->idPartido;
+		buffer[1] = aux->dato->golesEq1;
+		buffer[2] = aux->dato->golesEq2;
+
+		fwrite(buffer, sizeof(int), 3, fpPartidosJugados);
+		fflush(fpPartidosJugados);
+		aux = aux->sig;
+	}
+
+	fclose(fpPartidosJugados);
+	return FALSE;
+
 }
 
-t_bool leerPartidosJugados( tlista * listaJugados /*, tlista * listaPartidos, tequipo * equipos, size_t cantEquipos, tvectorPosiciones * tablaPos*/){
-    FILE * fpPartidosJugados;
-    //tlista * aux;
-    char NombreArchivo[M];
-    strcpy(NombreArchivo, "partidosjugados.dat");
-    
-    int buffer;
-    
-    fpPartidosJugados = fopen(NombreArchivo,"rb");
-    
-    if (!fpPartidosJugados) {
-        fprintf(stderr, "Error, no se pudo abrir %s",NombreArchivo);
-        return TRUE;
-    }
+t_bool leerPartidosJugados(tlista * listaJugados /*, tlista * listaPartidos, tequipo * equipos, size_t cantEquipos, tvectorPosiciones * tablaPos*/){
+	FILE * fpPartidosJugados;
+	//tlista * aux;
+	char NombreArchivo[M];
+	strcpy(NombreArchivo, "partidosjugados.dat");
 
-    while (  fread(&buffer,sizeof(int),1,fpPartidosJugados) ) {
-        printf("%d ",buffer);
-        fread(&buffer,sizeof(int),1,fpPartidosJugados);
-        printf("%d ",buffer);
-        fread(&buffer,sizeof(int),1,fpPartidosJugados);
-        printf("%d \n",buffer);
+	int buffer;
 
-      /*
-       la funcion de erik hace preguntas al usuario y no me sirve para usarla en este caso ...
-        if ( PartidoJugadoNuevo('i', listaPartidos, listaJugados, equipos, cantEquipos, tablaPos) == TRUE){
-            fprintf(stderr, "Error al agregar partido jugado ante la carga de %s",NombreArchivo);
-            return TRUE;
-            
-        }
-       */
-    }
-    return FALSE;
-    
+	fpPartidosJugados = fopen(NombreArchivo, "rb");
+
+	if (!fpPartidosJugados) {
+		fprintf(stderr, "Error, no se pudo abrir %s", NombreArchivo);
+		return TRUE;
+	}
+
+	while (fread(&buffer, sizeof(int), 1, fpPartidosJugados)) {
+		printf("%d ", buffer);
+		fread(&buffer, sizeof(int), 1, fpPartidosJugados);
+		printf("%d ", buffer);
+		fread(&buffer, sizeof(int), 1, fpPartidosJugados);
+		printf("%d \n", buffer);
+
+		/*
+		 la funcion de erik hace preguntas al usuario y no me sirve para usarla en este caso ...
+		 if ( PartidoJugadoNuevo('i', listaPartidos, listaJugados, equipos, cantEquipos, tablaPos) == TRUE){
+		 fprintf(stderr, "Error al agregar partido jugado ante la carga de %s",NombreArchivo);
+		 return TRUE;
+
+		 }
+		 */
+	}
+	return FALSE;
+
 }
 
 
@@ -336,38 +336,38 @@ t_bool leerPartidosJugados( tlista * listaJugados /*, tlista * listaPartidos, te
 // ############### LUCA ############################
 
 
-tpartido * BuscarPartidoPorId (tlista lista, int id){
-    
-    tnodo * aux = lista;
-    
-    
-    while ( aux ){
-        
-        if( aux->dato->idPartido == id )  return aux->dato;
-        else  aux = aux->sig;
-        
-    }
-    
-    return NULL;
-    
+tpartido * BuscarPartidoPorId(tlista lista, int id){
+
+	tnodo * aux = lista;
+
+
+	while (aux){
+
+		if (aux->dato->idPartido == id)  return aux->dato;
+		else  aux = aux->sig;
+
+	}
+
+	return NULL;
+
 }
 
 
 
-tpartido * BuscarPartidoPorEquipos (tlista lista, char * id1, char * id2 ){
-    
-    tnodo * aux= lista;
-    
-    while ( aux ){
-        
-        if( !(strcmp(aux->dato->equipo1->id,id1)) && !(strcmp(aux->dato->equipo2->id,id2))  )  return aux->dato;
-        if( !(strcmp(aux->dato->equipo1->id,id2)) && !(strcmp(aux->dato->equipo2->id,id1))  )  return aux->dato;
-        else  aux= aux->sig;
-        
-    }
-    
-    return NULL;
-    
+tpartido * BuscarPartidoPorEquipos(tlista lista, char * id1, char * id2){
+
+	tnodo * aux = lista;
+
+	while (aux){
+
+		if (!(strcmp(aux->dato->equipo1->id, id1)) && !(strcmp(aux->dato->equipo2->id, id2)))  return aux->dato;
+		if (!(strcmp(aux->dato->equipo1->id, id2)) && !(strcmp(aux->dato->equipo2->id, id1)))  return aux->dato;
+		else  aux = aux->sig;
+
+	}
+
+	return NULL;
+
 }
 
 
@@ -391,7 +391,7 @@ void  SwitchNodo(tlista * partidoAnterior, tlista * partidoAeliminar, tlista * l
 			(*listaJugados) = aux;
 			(*listaJugados)->sig = NULL;
 		}
-        
+
 		//aux->sig = NULL;
 	}
 	else
@@ -402,13 +402,13 @@ void  SwitchNodo(tlista * partidoAnterior, tlista * partidoAeliminar, tlista * l
 			while (nodo->sig)
 				nodo = nodo->sig;
 			nodo->sig = (*partidoAeliminar);
-            nodo->sig->sig=NULL;
+			nodo->sig->sig = NULL;
 		}
 		else
 			(*listaJugados) = (*partidoAeliminar);
 		(*partidoAeliminar)->sig = NULL;
 	}
-    
+
 }
 
 
@@ -416,30 +416,30 @@ t_bool intercambiarNodo(tlista  *listapendientes, tlista *listajugados, tequipo 
 {
 	tnodo * partidoAeliminar = (*listapendientes);
 	tnodo * partidoAnterior = NULL;
-    
+
 	if (!partido) return TRUE;
-	
-    while (partidoAeliminar)  // obtencion del nodo a eliminar y nodo anterior
-    {
-        if (partidoAeliminar->dato->idPartido == partido->idPartido){
-                
-            SwitchNodo(&partidoAnterior, &partidoAeliminar, listajugados);// pasa un nodo de una lista a la otra
-            if (!partidoAnterior){
-                (*listapendientes) = partidoAeliminar;
+
+	while (partidoAeliminar)  // obtencion del nodo a eliminar y nodo anterior
+	{
+		if (partidoAeliminar->dato->idPartido == partido->idPartido){
+
+			SwitchNodo(&partidoAnterior, &partidoAeliminar, listajugados);// pasa un nodo de una lista a la otra
+			if (!partidoAnterior){
+				(*listapendientes) = partidoAeliminar;
 				return FALSE;
 			}
 			else {
 				partidoAnterior = partidoAeliminar;
-				
+
 			}
 		}
-    partidoAeliminar = partidoAeliminar->sig;
+		partidoAeliminar = partidoAeliminar->sig;
 	}
-    return TRUE;
+	return TRUE;
 }
 
 
-t_bool PartidoJugadoNuevo(char opcion, tlista * partidosPendientes, tlista * partidosJugados, tequipo * equipos, size_t qEquipos, tvectorPosiciones * tablaPos)
+t_bool PartidoJugadoNuevo(char opcion, tlista* partidosPendientes, tlista *partidosJugados, tequipo* equipos, int qEquipos, tvectorPosiciones *tablaPos)
 {
 	tpartido *partido;
 	t_bool error = FALSE;
@@ -477,52 +477,90 @@ t_bool PartidoJugadoNuevo(char opcion, tlista * partidosPendientes, tlista * par
 				puts("Ese partido es invalido");
 			error = TRUE;
 		}
-        
+
 	}
 	if (error == FALSE)
 	{
 		printf("Introduzca los goles de %s: \n", partido->equipo1->nombre);
 		scanf("%d", &partido->golesEq1);
-        dump_line(stdin);
 		printf("Introduzca los goles de %s: \n", partido->equipo2->nombre);
 		scanf("%d", &partido->golesEq2);
-		dump_line(stdin);
+		fflush(stdin);
 		intercambiarNodo(&(*partidosPendientes), &(*partidosJugados), equipos, qEquipos, partido);
+		ActualizarPuntosEquipos(tablaPos, partido);
 	}
-	ActualizarPuntosEquipos(tablaPos, partido);
-    
+
+
 	return error;
 }
 
 
 void RecorrerTablaPos(tvectorPosiciones *tablaPos)
 {
-	int i = 0, gf, gc, dg;
+	int i = 0, j = 0, gf, gc, dg;
 	tequipoPos* equipoT = NULL;
-    printf("     EQUIPO  PTS PG PE PP GF GC DF\n");
-	while ((*tablaPos)[i])
+	char grupoText[6] = "GRUPO";
+	char equipoText[7] = "EQUIPO";
+	char grupo = 'A';
+
+	while (grupo != 'I')
 	{
-		equipoT = (*tablaPos)[i];
-		gf = equipoT->golesFavor;
-		gc = equipoT->golesContra;
-		dg = gf - gc;
-		printf("%10s     %d  %d  %d  %d  %d  %d  %d\n", equipoT->equipo->nombre, equipoT->puntos,equipoT->partidosGanados,equipoT->partidosEmpatados,equipoT->partidosPerdidos,gf,gc,dg);
+		i = 0;		
+		printf("%8s %c ------------------------------\n", grupoText, grupo);
+		printf("%15s    PTS PG PE PP GF GC DF\n", equipoText);
+		while ((*tablaPos)[i])
+		{
+			if ((*tablaPos)[i]->equipo->id[0] == grupo)
+			{
+				equipoT = (*tablaPos)[i];
+				gf = equipoT->golesFavor;
+				gc = equipoT->golesContra;
+				dg = equipoT->golesDif;
+				printf("%15s     %d  %d  %d  %d  %d  %d  %d\n", equipoT->equipo->nombre, equipoT->puntos, equipoT->partidosGanados, equipoT->partidosEmpatados, equipoT->partidosPerdidos, gf, gc, dg);
+
+			}
+			i++;
+		}
+		printf("\n");
+		grupo++;
+	}
+
+}
+
+void IntercambiarVecPos(tequipoPos** equipo1, tequipoPos** equipo2)
+{
+	tequipoPos* aux = NULL;
+	aux = (*equipo1);
+	(*equipo1) = (*equipo2);
+	(*equipo2) = aux;
+}
+
+void OrdenarTablaPos(tvectorPosiciones *tablaPos)
+{
+	
+	int i = 1, j, difGolEq1 = 0, difGolEq2 = 0;
+	int ordenado = 0;
+	while ((*tablaPos)[i] && ordenado == 0)
+	{
+		ordenado = 1;
+		j = 0;
+		while ((*tablaPos)[j + i])
+		{
+			if ((*tablaPos)[j + 1]->puntos > (*tablaPos)[j]->puntos)
+				IntercambiarVecPos(&(*tablaPos)[j], &(*tablaPos)[j + 1]);			
+
+			if (((*tablaPos)[j + 1]->puntos == (*tablaPos)[j]->puntos) && ((*tablaPos)[j + 1]->golesDif > (*tablaPos)[j]->golesDif))
+				IntercambiarVecPos(&(*tablaPos)[j], &(*tablaPos)[j + 1]);
+
+			ordenado = 0;
+			j++;
+		}
 		i++;
 	}
 }
 
-/*
-OrdenarTablaPos(tvectorPosiciones *tablaPos)
-{
-    
-    
-    
-}
- 
-*/
-
 tequipoPos * BuscarEquipoPorIdEnTabla(tvectorPosiciones * equiposEnTabla, char * id){
-    
+
 	size_t i = 0;
 	if ((*equiposEnTabla))
 	{
@@ -533,85 +571,60 @@ tequipoPos * BuscarEquipoPorIdEnTabla(tvectorPosiciones * equiposEnTabla, char *
 			i++;
 		}
 	}
-    
+
 	return NULL;
 }
 
-t_bool AgregarEquipoPos(tvectorPosiciones *vec, tequipo*equipo)
+tvectorPosiciones * CrearVecPosiciones(tequipo* equipos, int qEquipos)
 {
-	int i = 0;
-	/*tvectorPosiciones* vec = NULL;
-     vec = &(*(*tablaPos));*/
-    
-	if ((*vec))
+	int i;
+
+	tequipoPos** vec = NULL;
+	tvectorPosiciones * vecPos = (tvectorPosiciones *)malloc(sizeof(tvectorPosiciones)* 1);
+	vec = (tequipoPos**)malloc(sizeof(tequipoPos*)* (qEquipos + 1));
+
+
+	for (i = 0; i < qEquipos + 1; i++)
 	{
-        
-		while ((*vec)[i])
-			i++;
-		(*vec) = realloc((*vec), sizeof(tequipoPos*)*(i + 2)); //(mas el null mas el nuevo)
-		(*vec)[i] = (tequipoPos*)malloc(sizeof(tequipoPos)* 1);
-		(*vec)[i]->equipo = equipo;
-		(*vec)[i]->grupo = equipo->id[0];
-		(*vec)[i]->puntos = 0;
-		(*vec)[i]->golesContra = 0;
-		(*vec)[i]->golesFavor = 0;
-		(*vec)[i]->partidosEmpatados = 0;
-		(*vec)[i]->partidosGanados = 0;
-		(*vec)[i]->partidosJugados = 0;
-		(*vec)[i]->partidosPerdidos = 0;
-		(*vec)[i + 1] = NULL;
-        return FALSE;
+		vec[i] = (tequipoPos*)malloc(sizeof(tequipoPos)* 1);
+		vec[i]->equipo = equipos + i;
+		vec[i]->grupo = equipos[i].id;
+		vec[i]->puntos = 0;
+		vec[i]->golesContra = 0;
+		vec[i]->golesFavor = 0;
+		vec[i]->golesDif = 0;
+		vec[i]->partidosEmpatados = 0;
+		vec[i]->partidosGanados = 0;
+		vec[i]->partidosJugados = 0;
+		vec[i]->partidosPerdidos = 0;
 	}
-	else
-	{
-		(*vec) = (tequipoPos**)malloc(sizeof(tequipoPos*)* 1);
-		(*vec)[0] = (tequipoPos*)malloc(sizeof(tequipoPos)* 2);
-		(*vec)[0]->equipo = equipo;
-		(*vec)[0]->grupo = equipo->id[0];
-		(*vec)[0]->puntos = 0;
-		(*vec)[0]->golesContra = 0;
-		(*vec)[0]->golesFavor = 0;
-		(*vec)[0]->partidosEmpatados = 0;
-		(*vec)[0]->partidosGanados = 0;
-		(*vec)[0]->partidosJugados = 0;
-		(*vec)[0]->partidosPerdidos = 0;
-		(*vec)[1] = NULL;
-        return FALSE;
-	}
-    
-    return TRUE;
-    
+	vec[i] = NULL;
+	(*vecPos) = vec;
+	return vecPos;
 }
 
 t_bool ActualizarPuntosEquipos(tvectorPosiciones * tablaPos, tpartido*partido)
 {
-	tequipoPos * eqq = NULL;
 	t_bool error = FALSE;
 	tequipoPos* eq1, *eq2;
+
 	eq1 = BuscarEquipoPorIdEnTabla(tablaPos, partido->equipo1->id);
 	eq2 = BuscarEquipoPorIdEnTabla(tablaPos, partido->equipo2->id);
-    
-	if (!eq1)
-		AgregarEquipoPos(tablaPos, partido->equipo1);
-	if (!eq2)
-		AgregarEquipoPos(tablaPos, partido->equipo2);
-    
-	eq1 = BuscarEquipoPorIdEnTabla(tablaPos, partido->equipo1->id);
-	eq2 = BuscarEquipoPorIdEnTabla(tablaPos, partido->equipo2->id);
-    
-	eqq=*tablaPos[1];
+
 	if (eq1&&eq2)
 	{
 		eq1->equipo = partido->equipo1;
 		eq1->golesContra = partido->golesEq2;
 		eq1->golesFavor = partido->golesEq1;
+		eq1->golesDif = partido->golesEq1 - partido->golesEq2;		
 		eq1->partidosJugados++;
-        
+
 		eq2->equipo = partido->equipo2;
 		eq2->golesContra = partido->golesEq1;
 		eq2->golesFavor = partido->golesEq2;
+		eq2->golesDif = partido->golesEq2 - partido->golesEq1;
 		eq2->partidosJugados++;
-        
+
 		if (partido->golesEq1 == partido->golesEq2)
 		{
 			eq1->partidosEmpatados++;
@@ -631,13 +644,13 @@ t_bool ActualizarPuntosEquipos(tvectorPosiciones * tablaPos, tpartido*partido)
 			eq2->partidosGanados++;
 			eq2->puntos = eq1->puntos + 3;
 		}
-        
-		//OrdenarTablaPos(tablaPos);
-        
+
+		OrdenarTablaPos(tablaPos);
+
 	}
 	else
 		error = TRUE;
-    
+
 	return error;
 }
 

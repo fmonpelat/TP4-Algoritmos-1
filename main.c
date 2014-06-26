@@ -24,7 +24,7 @@ int main(int argc, const char * argv[])
     
 	//TestEquipos();
 	//TestTraerPartidos();
-	tvectorPosiciones tablaPos = NULL;
+	tvectorPosiciones * tablaPos = NULL;
 	tequipo * equipos = NULL;
 	size_t cantEquipos;
 	tlista listaPartidos;
@@ -32,7 +32,7 @@ int main(int argc, const char * argv[])
 	cantEquipos = TraerEquipos(&equipos);
     
 	TraerPartidos(equipos, cantEquipos, &listaPartidos);
-    
+	tablaPos = CrearVecPosiciones(equipos, cantEquipos);
 	if (ValidarPartidos(listaPartidos))
 		RecorrerPartidos(listaPartidos);
 
@@ -41,34 +41,34 @@ int main(int argc, const char * argv[])
 
 	/*tablaPos = (tequipoPos**)malloc(sizeof(tequipoPos*));
      tablaPos[0] = NULL;*/
-	if ( PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, &tablaPos) == FALSE)
+	if ( PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, tablaPos) == FALSE)
 	{
 		printf("Lista de partidos \n");
 		RecorrerPartidos(listaPartidos);
 		printf("Lista de partidos jugados \n");
 		RecorrerPartidos(partidosJugados);
 		printf("Lista de posiciones \n");
-		RecorrerTablaPos(&tablaPos);
+		RecorrerTablaPos(tablaPos);
 	}
     
-	if (PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, &tablaPos) == FALSE)
+	if (PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, tablaPos) == FALSE)
 	{
 		printf("Lista de partidos \n");
 		RecorrerPartidos(listaPartidos);
 		printf("Lista de partidos jugados \n");
 		RecorrerPartidos(partidosJugados);
 		printf("Lista de posiciones \n");
-		RecorrerTablaPos(&tablaPos);
+		RecorrerTablaPos(tablaPos);
 	}
     
-	if (PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, &tablaPos) == FALSE)
+	if (PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, tablaPos) == FALSE)
 	{
 		printf("Lista de partidos \n");
 		RecorrerPartidos(listaPartidos);
 		printf("Lista de partidos jugados \n");
 		RecorrerPartidos(partidosJugados);
 		printf("Lista de posiciones \n");
-		RecorrerTablaPos(&tablaPos);
+		RecorrerTablaPos(tablaPos);
 	}
 
 

@@ -175,7 +175,7 @@ void RecorrerPartidos(tlista lista)
 			printf(" (%d/%d/%d) ", lista->dato->fecha.dd, lista->dato->fecha.mm, lista->dato->fecha.aaaa);
 
 		if (lista->dato->equipo1 && lista->dato->equipo2)
-			printf("Equipo1: %s, Equipo2: %s", lista->dato->equipo1->nombre, lista->dato->equipo2->nombre);
+			printf("%s-%s (%d:%d)", lista->dato->equipo1->nombre, lista->dato->equipo2->nombre, lista->dato->golesEq1,lista->dato->golesEq2);
 		puts("");
 
 		lista = lista->sig;
@@ -427,12 +427,9 @@ t_bool intercambiarNodo(tlista  *listapendientes, tlista *listajugados, tequipo 
 			if (!partidoAnterior){
 				(*listapendientes) = partidoAeliminar;
 				return FALSE;
-			}
-			else {
-				partidoAnterior = partidoAeliminar;
-
-			}
+			}			
 		}
+		partidoAnterior = partidoAeliminar;
 		partidoAeliminar = partidoAeliminar->sig;
 	}
 	return TRUE;
@@ -487,7 +484,7 @@ t_bool PartidoJugadoNuevo(char opcion, tlista* partidosPendientes, tlista *parti
 		scanf("%d", &partido->golesEq2);
 		fflush(stdin);
 		intercambiarNodo(&(*partidosPendientes), &(*partidosJugados), equipos, qEquipos, partido);
-		ActualizarPuntosEquipos(tablaPos, partido);
+		//ModificarTablaPos(tablaPos, partido, 0);
 	}
 
 
@@ -505,9 +502,9 @@ void RecorrerTablaPos(tvectorPosiciones *tablaPos)
 
 	while (grupo != 'I')
 	{
-		i = 0;		
-		printf("%8s %c ------------------------------\n", grupoText, grupo);
-		printf("%15s    PTS PG PE PP GF GC DF\n", equipoText);
+		i = 0;
+		printf("%8s %c --------------------------------\n", grupoText, grupo);
+		printf("%15s    PTS PJ PG PE PP GF GC DF\n", equipoText);
 		while ((*tablaPos)[i])
 		{
 			if ((*tablaPos)[i]->equipo->id[0] == grupo)
@@ -516,7 +513,7 @@ void RecorrerTablaPos(tvectorPosiciones *tablaPos)
 				gf = equipoT->golesFavor;
 				gc = equipoT->golesContra;
 				dg = equipoT->golesDif;
-				printf("%15s     %d  %d  %d  %d  %d  %d  %d\n", equipoT->equipo->nombre, equipoT->puntos, equipoT->partidosGanados, equipoT->partidosEmpatados, equipoT->partidosPerdidos, gf, gc, dg);
+				printf("%15s     %d  %d  %d  %d  %d  %d  %d  %d\n", equipoT->equipo->nombre, equipoT->puntos, equipoT->partidosJugados, equipoT->partidosGanados, equipoT->partidosEmpatados, equipoT->partidosPerdidos, gf, gc, dg);
 
 			}
 			i++;
@@ -537,7 +534,7 @@ void IntercambiarVecPos(tequipoPos** equipo1, tequipoPos** equipo2)
 
 void OrdenarTablaPos(tvectorPosiciones *tablaPos)
 {
-	
+
 	int i = 1, j, difGolEq1 = 0, difGolEq2 = 0;
 	int ordenado = 0;
 	while ((*tablaPos)[i] && ordenado == 0)
@@ -547,10 +544,14 @@ void OrdenarTablaPos(tvectorPosiciones *tablaPos)
 		while ((*tablaPos)[j + i])
 		{
 			if ((*tablaPos)[j + 1]->puntos > (*tablaPos)[j]->puntos)
-				IntercambiarVecPos(&(*tablaPos)[j], &(*tablaPos)[j + 1]);			
-
-			if (((*tablaPos)[j + 1]->puntos == (*tablaPos)[j]->puntos) && ((*tablaPos)[j + 1]->golesDif > (*tablaPos)[j]->golesDif))
 				IntercambiarVecPos(&(*tablaPos)[j], &(*tablaPos)[j + 1]);
+
+			if ((*tablaPos)[j + 1]->partidosJugados == (*tablaPos)[j]->partidosJugados)
+			{
+
+				if (((*tablaPos)[j + 1]->puntos == (*tablaPos)[j]->puntos) && ((*tablaPos)[j + 1]->golesDif > (*tablaPos)[j]->golesDif))
+					IntercambiarVecPos(&(*tablaPos)[j], &(*tablaPos)[j + 1]);
+			}
 
 			ordenado = 0;
 			j++;
@@ -559,7 +560,8 @@ void OrdenarTablaPos(tvectorPosiciones *tablaPos)
 	}
 }
 
-tequipoPos * BuscarEquipoPorIdEnTabla(tvectorPosiciones * equiposEnTabla, char * id){
+tequipoPos * BuscarEquipoPorIdEnTablaPos(tvectorPosiciones * equiposEnTabla, char * id)
+{
 
 	size_t i = 0;
 	if ((*equiposEnTabla))
@@ -575,7 +577,29 @@ tequipoPos * BuscarEquipoPorIdEnTabla(tvectorPosiciones * equiposEnTabla, char *
 	return NULL;
 }
 
-tvectorPosiciones * CrearVecPosiciones(tequipo* equipos, int qEquipos)
+void ActualizarVecPos(tlista partidosJugados,tvectorPosiciones * vecPos)
+{
+	int i = 0;
+	while ((*vecPos)[i])
+	{
+		(*vecPos)[i]->puntos = 0;
+		(*vecPos)[i]->golesContra = 0;
+		(*vecPos)[i]->golesFavor = 0;
+		(*vecPos)[i]->golesDif = 0;
+		(*vecPos)[i]->partidosEmpatados = 0;
+		(*vecPos)[i]->partidosGanados = 0;
+		(*vecPos)[i]->partidosJugados = 0;
+		(*vecPos)[i]->partidosPerdidos = 0;
+		i++;
+	}
+	while (partidosJugados)
+	{
+		ModificarTablaPos(vecPos, partidosJugados->dato, 0);
+		partidosJugados = partidosJugados->sig;
+	}
+}
+
+tvectorPosiciones * CrearVecPos(tlista partidosJugados, tequipo* equipos, int qEquipos)
 {
 	int i;
 
@@ -599,51 +623,88 @@ tvectorPosiciones * CrearVecPosiciones(tequipo* equipos, int qEquipos)
 		vec[i]->partidosPerdidos = 0;
 	}
 	vec[i] = NULL;
-	(*vecPos) = vec;
+	(*vecPos) = vec;	
+
 	return vecPos;
 }
 
-t_bool ActualizarPuntosEquipos(tvectorPosiciones * tablaPos, tpartido*partido)
+
+t_bool ModificarTablaPos(tvectorPosiciones * tablaPos, tpartido*partido, int borrar)
 {
 	t_bool error = FALSE;
 	tequipoPos* eq1, *eq2;
 
-	eq1 = BuscarEquipoPorIdEnTabla(tablaPos, partido->equipo1->id);
-	eq2 = BuscarEquipoPorIdEnTabla(tablaPos, partido->equipo2->id);
+	eq1 = BuscarEquipoPorIdEnTablaPos(tablaPos, partido->equipo1->id);
+	eq2 = BuscarEquipoPorIdEnTablaPos(tablaPos, partido->equipo2->id);
 
 	if (eq1&&eq2)
 	{
-		eq1->equipo = partido->equipo1;
-		eq1->golesContra = partido->golesEq2;
-		eq1->golesFavor = partido->golesEq1;
-		eq1->golesDif = partido->golesEq1 - partido->golesEq2;		
-		eq1->partidosJugados++;
+		
+			if (!borrar)
+			{
+				eq1->golesContra = eq1->golesContra + partido->golesEq2;
+				eq1->golesFavor = eq1->golesFavor + partido->golesEq1;
+				eq1->golesDif = eq1->golesFavor - eq1->golesContra;
+				eq1->partidosJugados++;
 
-		eq2->equipo = partido->equipo2;
-		eq2->golesContra = partido->golesEq1;
-		eq2->golesFavor = partido->golesEq2;
-		eq2->golesDif = partido->golesEq2 - partido->golesEq1;
-		eq2->partidosJugados++;
+				eq2->golesContra = eq2->golesContra + partido->golesEq1;
+				eq2->golesFavor = eq2->golesFavor + partido->golesEq2;
+				eq2->golesDif = eq2->golesFavor - eq2->golesContra;
+				eq2->partidosJugados++;
 
-		if (partido->golesEq1 == partido->golesEq2)
-		{
-			eq1->partidosEmpatados++;
-			eq2->partidosEmpatados++;
-			eq1->puntos++;
-			eq2->puntos++;
-		}
-		else if (partido->golesEq1 > partido->golesEq2)
-		{
-			eq1->partidosGanados++;
-			eq2->partidosPerdidos++;
-			eq1->puntos = eq1->puntos + 3;
-		}
-		else
-		{
-			eq1->partidosPerdidos++;
-			eq2->partidosGanados++;
-			eq2->puntos = eq1->puntos + 3;
-		}
+				if (partido->golesEq1 == partido->golesEq2)
+				{
+					eq1->partidosEmpatados++;
+					eq2->partidosEmpatados++;
+					eq1->puntos++;
+					eq2->puntos++;
+				}
+				else if (partido->golesEq1 > partido->golesEq2)
+				{
+					eq1->partidosGanados++;
+					eq2->partidosPerdidos++;
+					eq1->puntos = eq1->puntos + 3;
+				}
+				else
+				{
+					eq1->partidosPerdidos++;
+					eq2->partidosGanados++;
+					eq2->puntos = eq1->puntos + 3;
+				}
+			}
+			else
+			{
+				eq1->golesContra = eq1->golesContra - partido->golesEq2;
+				eq1->golesFavor = eq1->golesFavor - partido->golesEq1;
+				eq1->golesDif = eq1->golesFavor - eq1->golesContra;
+				eq1->partidosJugados++;
+
+				eq2->golesContra = eq2->golesContra - partido->golesEq1;
+				eq2->golesFavor = eq2->golesFavor - partido->golesEq2;
+				eq2->golesDif = eq2->golesFavor - eq2->golesContra;
+				eq2->partidosJugados++;
+
+				if (partido->golesEq1 == partido->golesEq2)
+				{
+					eq1->partidosEmpatados--;
+					eq2->partidosEmpatados--;
+					eq1->puntos--;
+					eq2->puntos--;
+				}
+				else if (partido->golesEq1 > partido->golesEq2)
+				{
+					eq1->partidosGanados--;
+					eq2->partidosPerdidos--;
+					eq1->puntos = eq1->puntos - 3;
+				}
+				else
+				{
+					eq1->partidosPerdidos--;
+					eq2->partidosGanados--;
+					eq2->puntos = eq1->puntos - 3;
+				}
+			}
+		
 
 		OrdenarTablaPos(tablaPos);
 

@@ -32,7 +32,7 @@ int main(int argc, const char * argv[])
 	cantEquipos = TraerEquipos(&equipos);
     
 	TraerPartidos(equipos, cantEquipos, &listaPartidos);
-	tablaPos = CrearVecPosiciones(equipos, cantEquipos);
+	
 	if (ValidarPartidos(listaPartidos))
 		RecorrerPartidos(listaPartidos);
 
@@ -41,8 +41,16 @@ int main(int argc, const char * argv[])
 
 	/*tablaPos = (tequipoPos**)malloc(sizeof(tequipoPos*));
      tablaPos[0] = NULL;*/
+	PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, tablaPos);
+	PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, tablaPos);
+	PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, tablaPos);
+
+	tablaPos = CrearVecPos(partidosJugados, equipos, cantEquipos);
+	ActualizarVecPos(partidosJugados, tablaPos);
+
 	if ( PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, tablaPos) == FALSE)
 	{
+		ActualizarVecPos(partidosJugados, tablaPos);
 		printf("Lista de partidos \n");
 		RecorrerPartidos(listaPartidos);
 		printf("Lista de partidos jugados \n");
@@ -50,27 +58,8 @@ int main(int argc, const char * argv[])
 		printf("Lista de posiciones \n");
 		RecorrerTablaPos(tablaPos);
 	}
-    
-	if (PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, tablaPos) == FALSE)
-	{
-		printf("Lista de partidos \n");
-		RecorrerPartidos(listaPartidos);
-		printf("Lista de partidos jugados \n");
-		RecorrerPartidos(partidosJugados);
-		printf("Lista de posiciones \n");
-		RecorrerTablaPos(tablaPos);
-	}
-    
-	if (PartidoJugadoNuevo('i', &listaPartidos, &partidosJugados, equipos, cantEquipos, tablaPos) == FALSE)
-	{
-		printf("Lista de partidos \n");
-		RecorrerPartidos(listaPartidos);
-		printf("Lista de partidos jugados \n");
-		RecorrerPartidos(partidosJugados);
-		printf("Lista de posiciones \n");
-		RecorrerTablaPos(tablaPos);
-	}
-
+	char c = '2';
+	getc(c);
 
     //En Desarrollo falta verificar que esta guardando me esta guardando las cosas como:
     if( GrabarPartidosJugados( &partidosJugados )==TRUE ){

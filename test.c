@@ -69,14 +69,11 @@ int TestFileDump(void){
     tmundial mundialx;
     mundialx.equipos=NULL;
 	tvectorPosiciones * tablaPos = NULL;
-	//tequipo * equipos = NULL;
-	//size_t cantEquipos;
-	//tlista listaPartidos;
-	//tlista partidosJugados = NULL;
     
-    
+    // traemos de archivo los equipos
 	mundialx.q_equipos = TraerEquipos(&(mundialx.equipos));
     
+    // traemos de archivo la lista de partidos
 	TraerPartidos(mundialx.equipos, mundialx.q_equipos, &(mundialx.partidosPendientes));
 	
     // hacemos test si los partidos estan bien definidos sino damos un error y decimos el porque...

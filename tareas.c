@@ -301,7 +301,6 @@ t_bool GrabarPartidosJugados(tlista * lista_jugados){
 t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequipo * equipos, size_t cantEquipos/*, tvectorPosiciones * tablaPos */){
     
 	FILE * fpPartidosJugados;
-	//tlista * aux;
 	char NombreArchivo[M];
 	strcpy(NombreArchivo, "partidosjugados.dat");
 	int buffer[M_FILE];

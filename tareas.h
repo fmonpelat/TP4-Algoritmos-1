@@ -12,7 +12,7 @@
 //M_ID debe ser mayor a 0 si es que guardaremos los grupos y el numero ej: A1 sino no hay lugar para el '\0'
 #define M_ID 3
 #define M 64
-
+#define M_FILE 3
 
 typedef enum bool{ TRUE, FALSE } t_bool;
 
@@ -47,8 +47,8 @@ struct nodo* sig;
 typedef tnodo* tlista;
 
 typedef struct mundial{
-int q_equipos;
-tequipo ** equipos;
+size_t q_equipos;
+tequipo * equipos;
 tlista partidosJugados;
 tlista partidosPendientes;
 } tmundial;
@@ -70,8 +70,7 @@ int golesDif;
 
 typedef tequipoPos ** tvectorPosiciones;
 
-//FACU
-//EQUIPOS DONE
+/* #### FACU #### */
 size_t TraerEquipos( tequipo ** ); /*Lee el .txt, convierte los datos a un array de equipos */
 void TestEquipos( void );
 void DestruirEquipos(tequipo*); /*libera la memoria */
@@ -79,6 +78,14 @@ void DestruirEquipos(tequipo*); /*libera la memoria */
 /* AUX compatibilidad macosx simil fflush. */
 void dump_line(FILE *);
 
+/* para agregar un nuevo partido a la lista de jugados. */
+t_bool newPartidoJugado(int idPartido, int gol1, int gol2,tlista * partidosPendientes, tlista * partidosJugados, tequipo * equipos, size_t qEquipos/*, tvectorPosiciones *tablaPos*/); /* asigna un nuevo partido a la lista con los goles de los 2 equipos pasandole el id de partido */
+
+/* funciones sobre el archivo binario. */
+t_bool GrabarPartidosJugados( tlista * );
+typedef enum bool_partido { ID , GOL1 , GOL2 } int_filepartido;
+t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequipo * equipos, size_t cantEquipos/*, tvectorPosiciones * tablaPos */);
+int TestFileDump(void);
 
 
 
@@ -91,19 +98,20 @@ tequipo * BuscarEquipoPorId( tequipo * , char * , size_t );
 void RecorrerPartidos( tlista );
 t_bool ValidarPartidos(tlista lista);
 
-// validar unicos ids de partidos de la lista.
+t_bool PartidoJugadoNuevo(char , tlista * , tlista * , tequipo * , size_t , tvectorPosiciones * );
+tequipoPos * BuscarEquipoPorIdEnTablaPos(tvectorPosiciones * equiposEnTabla, char * id);
+tvectorPosiciones * CrearVecPos(tlista partidosJugados, tequipo* equipos, size_t qEquipos);
+
+//esta funcion si le pasas un 0 a int borrar
+t_bool ModificarTablaPos(tvectorPosiciones * tablaPos, tpartido * partido, int borrar);
+
+// esta crea toda la tabla de posiciones de todos los partidos jugados.
+void ActualizarVecPos(tlista partidosJugados, tvectorPosiciones * vecPos);
 
 
-
-
-// funciones sobre el archivo binario
-// la funcion devuelve estados de error TRUE o FALSE
-t_bool GrabarPartidosJugados( tlista * );
-
-
-// leer partidos
-t_bool leerPartidosJugados( tlista * );
-
+void RecorrerTablaPos(tvectorPosiciones *tablaPos);
+void OrdenarTablaPos(tvectorPosiciones *tablaPos);
+void IntercambiarVecPos(tequipoPos** equipo1, tequipoPos** equipo2);
 
 
 
@@ -116,14 +124,7 @@ void TestBusquedaPartidos( tlista );
 
 void  SwitchNodo(tlista  * , tlista * , tlista * );
 t_bool intercambiarNodo(tlista  * listapendientes, tlista * listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido);
-t_bool PartidoJugadoNuevo(char , tlista * , tlista * , tequipo * , size_t , tvectorPosiciones * );
-tequipoPos * BuscarEquipoPorIdEnTablaPos(tvectorPosiciones * equiposEnTabla, char * id);
-tvectorPosiciones * CrearVecPos(tlista partidosJugados, tequipo* equipos, size_t qEquipos);
-t_bool ModificarTablaPos(tvectorPosiciones * tablaPos, tpartido*partido, int borrar);
-void ActualizarVecPos(tlista partidosJugados, tvectorPosiciones * vecPos);
-void RecorrerTablaPos(tvectorPosiciones *tablaPos);
-void OrdenarTablaPos(tvectorPosiciones *tablaPos);
-void IntercambiarVecPos(tequipoPos** equipo1, tequipoPos** equipo2);
+
 
 /*
 ModificarPartidosJugado

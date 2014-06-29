@@ -17,13 +17,18 @@
 
 void TestEquipos(void){
     
+    size_t i;
     tequipo * eqaux=NULL;
-    size_t i,cantEquipos;
+    tmundial mundialx;
     
-    cantEquipos=TraerEquipos(&eqaux);
+    mundialx.equipos=NULL;
+    mundialx.q_equipos=TraerEquipos(&(mundialx.equipos));
     
-    for (i=0; i<cantEquipos; i++) {
-        printf("Grupo: %s Pais: %s\n",eqaux[i].id,eqaux[i].nombre);
+    //mundialx.equipos=eqaux;
+    //mundialx.q_equipos=cantEquipos;
+    
+    for (i=0; i<mundialx.q_equipos; i++) {
+        printf("Grupo: %s Pais: %s\n",mundialx.equipos[i].id,mundialx.equipos[i].nombre);
     }
     
     DestruirEquipos(eqaux);
@@ -62,6 +67,68 @@ void TestBusquedaPartidos( tlista listaEquipos ){
 }
 
 
-
+int TestFileDump(void){
+    
+    t_bool error=FALSE;
+	tvectorPosiciones * tablaPos = NULL;
+	tequipo * equipos = NULL;
+	size_t cantEquipos;
+	tlista listaPartidos;
+	tlista partidosJugados = NULL;
+    
+    
+	cantEquipos = TraerEquipos(&equipos);
+    
+	TraerPartidos(equipos, cantEquipos, &listaPartidos);
+	
+    // hacemos test si los partidos estan bien definidos sino damos un error y decimos el porque...
+	if ( ValidarPartidos(listaPartidos) == TRUE ){
+        fprintf(stderr, "La validacion de los partidos fue insatisfactoria, revise el archivo de partidos.\n");
+        return EXIT_FAILURE;
+        // para debug: RecorrerPartidos(listaPartidos);
+    }
+    
+    tablaPos = CrearVecPos(partidosJugados, equipos, cantEquipos);
+    
+    if (  leerPartidosJugados(&partidosJugados,&listaPartidos,equipos,cantEquipos /*,tablaPos */ ) == TRUE ){
+        fprintf(stderr, "No se pudo leer desde el archivo, salimos con error.");
+        return EXIT_FAILURE;
+    }
+    
+    
+    /* if ( (error = newPartidoJugado(1,2,4,&listaPartidos,&partidosJugados, equipos, cantEquipos, tablaPos))==TRUE ){
+     fprintf(stderr, "Error");
+     }
+     if ( (error = newPartidoJugado(2,1,1,&listaPartidos,&partidosJugados, equipos, cantEquipos, tablaPos))==TRUE ){
+     fprintf(stderr, "Error");
+     }
+     */
+    
+	ActualizarVecPos(partidosJugados, tablaPos);
+    
+	if (  error  )
+	{
+		ActualizarVecPos(partidosJugados, tablaPos);
+		printf("Lista de partidos \n");
+		RecorrerPartidos(listaPartidos);
+		printf("Lista de partidos jugados \n");
+		RecorrerPartidos(partidosJugados);
+		printf("Lista de posiciones \n");
+		RecorrerTablaPos(tablaPos);
+	}
+	
+    
+    if( GrabarPartidosJugados( &partidosJugados ) == TRUE ){
+        return 1;
+    };
+    
+    DestruirPartidos( listaPartidos );
+    DestruirEquipos(equipos);
+    
+    
+    
+    
+    return 0;
+}
 
 

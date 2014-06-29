@@ -101,6 +101,9 @@ void DestruirEquipos(tequipo * equipos){
 
 }
 
+
+
+
 // ########## ERIK ######################################
 
 
@@ -214,8 +217,8 @@ void DestruirPartidos(tnodo * nodo){
 
 }
 
-t_bool ValidarPartidos(tlista lista)
-{
+t_bool ValidarPartidos(tlista lista){
+    
 	int validado = 1, fila = 0, filaAux = 0;
 	tnodo* nodo = lista;
 
@@ -295,36 +298,43 @@ t_bool GrabarPartidosJugados(tlista * lista_jugados){
 
 }
 
-t_bool leerPartidosJugados(tlista * listaJugados /*, tlista * listaPartidos, tequipo * equipos, size_t cantEquipos, tvectorPosiciones * tablaPos*/){
+t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequipo * equipos, size_t cantEquipos/*, tvectorPosiciones * tablaPos */){
+    
 	FILE * fpPartidosJugados;
 	//tlista * aux;
 	char NombreArchivo[M];
 	strcpy(NombreArchivo, "partidosjugados.dat");
+	int buffer[M_FILE];
 
-	int buffer;
-
+    
+    if (!*listaPartidos) {
+        fprintf(stderr, "Error, lista de partidos no inicializada (estado nil).\n");
+        fprintf(stderr, "Hint: utilizo la funcion despues de cargar los partidos?...\n");
+        return TRUE;
+    }
+    
+    if (!equipos) {
+        fprintf(stderr, "Error, array equipos no inicializada (estado nil).\n");
+        fprintf(stderr, "Hint: utilizo la funcion despues de cargar los equipos?...\n");
+        return TRUE;
+    }
+    
 	fpPartidosJugados = fopen(NombreArchivo, "rb");
 
 	if (!fpPartidosJugados) {
-		fprintf(stderr, "Error, no se pudo abrir %s", NombreArchivo);
+		fprintf(stderr, "Error, no se pudo abrir %s\n", NombreArchivo);
 		return TRUE;
 	}
 
-	while (fread(&buffer, sizeof(int), 1, fpPartidosJugados)) {
-		printf("%d ", buffer);
-		fread(&buffer, sizeof(int), 1, fpPartidosJugados);
-		printf("%d ", buffer);
-		fread(&buffer, sizeof(int), 1, fpPartidosJugados);
-		printf("%d \n", buffer);
-
-		/*
-		 la funcion de erik hace preguntas al usuario y no me sirve para usarla en este caso ...
-		 if ( PartidoJugadoNuevo('i', listaPartidos, listaJugados, equipos, cantEquipos, tablaPos) == TRUE){
-		 fprintf(stderr, "Error al agregar partido jugado ante la carga de %s",NombreArchivo);
-		 return TRUE;
-
-		 }
-		 */
+	while (fread(buffer, sizeof(int), 1, fpPartidosJugados)) {
+		printf("%d ", buffer[0]);
+		fread(buffer+1, sizeof(int), 1, fpPartidosJugados);
+		printf("%d ", buffer[1]);
+		fread(buffer+2, sizeof(int), 1, fpPartidosJugados);
+		printf("%d \n", buffer[2]);
+        
+        newPartidoJugado(buffer[ID],buffer[GOL1],buffer[GOL2],listaPartidos,listaJugados, equipos, cantEquipos/*, tablaPos */);
+        
 	}
 	return FALSE;
 
@@ -436,9 +446,9 @@ t_bool intercambiarNodo(tlista  *listapendientes, tlista *listajugados, tequipo 
 }
 
 
-t_bool PartidoJugadoNuevo(char opcion, tlista* partidosPendientes, tlista *partidosJugados, tequipo* equipos, int qEquipos, tvectorPosiciones *tablaPos)
-{
-	tpartido *partido;
+t_bool PartidoJugadoNuevo(char opcion, tlista * partidosPendientes, tlista * partidosJugados, tequipo * equipos, size_t qEquipos, tvectorPosiciones *tablaPos){
+    
+	tpartido * partido=NULL;
 	t_bool error = FALSE;
 	char  id1[M_ID], id2[M_ID];
 	int id;
@@ -492,9 +502,40 @@ t_bool PartidoJugadoNuevo(char opcion, tlista* partidosPendientes, tlista *parti
 }
 
 
+// creo la funcion de PartidoJugadoNuevo sin la interaccion del user - fmonpelat -
+
+t_bool newPartidoJugado(int idPartido, int gol1, int gol2,tlista * partidosPendientes, tlista * partidosJugados, tequipo * equipos, size_t qEquipos/*, tvectorPosiciones *tablaPos*/){
+    
+    
+        tpartido * partido=NULL;
+    
+		partido = BuscarPartidoPorId((*partidosPendientes), idPartido);
+        // si no lo encontramos el partido en partidos pendientes lo buscamos en el jugado.
+		if (!partido)
+		{
+			partido = BuscarPartidoPorId((*partidosJugados), idPartido);
+			if (!partido) fprintf(stderr,"Ese partido es invalido");
+			else fprintf(stderr,"Ese partido ya se jugo");
+            return TRUE;
+		}
+	
+
+        partido->golesEq1=gol1;
+		partido->golesEq2=gol2;
+		intercambiarNodo(&(*partidosPendientes), &(*partidosJugados), equipos, qEquipos, partido);
+		//ModificarTablaPos(tablaPos, partido, 0);
+
+        return FALSE;
+}
+
+
+
+
+
+
 void RecorrerTablaPos(tvectorPosiciones *tablaPos)
 {
-	int i = 0, j = 0, gf, gc, dg;
+	int i = 0, gf, gc, dg;
 	tequipoPos* equipoT = NULL;
 	char grupoText[6] = "GRUPO";
 	char equipoText[7] = "EQUIPO";
@@ -535,7 +576,7 @@ void IntercambiarVecPos(tequipoPos** equipo1, tequipoPos** equipo2)
 void OrdenarTablaPos(tvectorPosiciones *tablaPos)
 {
 
-	int i = 1, j, difGolEq1 = 0, difGolEq2 = 0;
+	int i = 1, j ;
 	int ordenado = 0;
 	while ((*tablaPos)[i] && ordenado == 0)
 	{
@@ -612,7 +653,7 @@ tvectorPosiciones * CrearVecPos(tlista partidosJugados, tequipo* equipos, size_t
 	{
 		vec[i] = (tequipoPos*)malloc(sizeof(tequipoPos)* 1);
 		vec[i]->equipo = equipos + i;
-		vec[i]->grupo = equipos[i].id;
+		strcpy( &vec[i]->grupo , equipos[i].id );
 		vec[i]->puntos = 0;
 		vec[i]->golesContra = 0;
 		vec[i]->golesFavor = 0;
@@ -629,7 +670,7 @@ tvectorPosiciones * CrearVecPos(tlista partidosJugados, tequipo* equipos, size_t
 }
 
 
-t_bool ModificarTablaPos(tvectorPosiciones * tablaPos, tpartido*partido, int borrar)
+t_bool ModificarTablaPos(tvectorPosiciones * tablaPos, tpartido * partido, int borrar)
 {
 	t_bool error = FALSE;
 	tequipoPos* eq1, *eq2;
@@ -637,7 +678,7 @@ t_bool ModificarTablaPos(tvectorPosiciones * tablaPos, tpartido*partido, int bor
 	eq1 = BuscarEquipoPorIdEnTablaPos(tablaPos, partido->equipo1->id);
 	eq2 = BuscarEquipoPorIdEnTablaPos(tablaPos, partido->equipo2->id);
 
-	if (eq1&&eq2)
+	if ( eq1 && eq2 )
 	{
 		
 			if (!borrar)
@@ -714,5 +755,12 @@ t_bool ModificarTablaPos(tvectorPosiciones * tablaPos, tpartido*partido, int bor
 
 	return error;
 }
+
+
+
+
+
+
+
 
 

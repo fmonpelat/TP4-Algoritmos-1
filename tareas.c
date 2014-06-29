@@ -327,11 +327,11 @@ t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequi
 	}
 
 	while (fread(buffer, sizeof(int), 1, fpPartidosJugados)) {
-		printf("%d ", buffer[0]);
+		/*printf("%d ", buffer[0]);*/
 		fread(buffer+1, sizeof(int), 1, fpPartidosJugados);
-		printf("%d ", buffer[1]);
+		/*printf("%d ", buffer[1]);*/
 		fread(buffer+2, sizeof(int), 1, fpPartidosJugados);
-		printf("%d \n", buffer[2]);
+		/*printf("%d \n", buffer[2]);*/
         
         newPartidoJugado(buffer[ID],buffer[GOL1],buffer[GOL2],listaPartidos,listaJugados, equipos, cantEquipos/*, tablaPos */);
         

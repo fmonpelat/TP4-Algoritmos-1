@@ -20,9 +20,10 @@
 
 int main(int argc, const char * argv[]){
     
-    
+    /*
 	TestEquipos();
-	/*TestTraerPartidos();
+    TestTraerPartidos();
+	
     if (TestFileDump()) {
         return EXIT_FAILURE;
     }

@@ -18,37 +18,33 @@
 void TestEquipos(void){
     
     size_t i;
-    tequipo * eqaux=NULL;
     tmundial mundialx;
     
     mundialx.equipos=NULL;
     mundialx.q_equipos=TraerEquipos(&(mundialx.equipos));
     
-    //mundialx.equipos=eqaux;
-    //mundialx.q_equipos=cantEquipos;
-    
     for (i=0; i<mundialx.q_equipos; i++) {
         printf("Grupo: %s Pais: %s\n",mundialx.equipos[i].id,mundialx.equipos[i].nombre);
     }
     
-    DestruirEquipos(eqaux);
+    DestruirEquipos(mundialx.equipos);
 
 }
 
 void TestTraerPartidos(void){
 
+    tmundial mundialx;
+    mundialx.equipos=NULL;
+    //tlista listaEquipos;
     
-    tequipo * equipos=NULL;
-    size_t cantEquipos;
-    tlista listaEquipos;
     
-    cantEquipos=TraerEquipos(&equipos);
+    mundialx.q_equipos=TraerEquipos(&(mundialx.equipos));
     
-    TraerPartidos(equipos,cantEquipos,&listaEquipos);
+    TraerPartidos(mundialx.equipos,mundialx.q_equipos,&(mundialx.partidosPendientes));
     
-    RecorrerPartidos(listaEquipos);
+    RecorrerPartidos( mundialx.partidosPendientes );
 
-    DestruirPartidos( listaEquipos );
+    DestruirPartidos( mundialx.partidosPendientes );
     
 }
 
@@ -70,27 +66,29 @@ void TestBusquedaPartidos( tlista listaEquipos ){
 int TestFileDump(void){
     
     t_bool error=FALSE;
+    tmundial mundialx;
+    mundialx.equipos=NULL;
 	tvectorPosiciones * tablaPos = NULL;
-	tequipo * equipos = NULL;
-	size_t cantEquipos;
-	tlista listaPartidos;
-	tlista partidosJugados = NULL;
+	//tequipo * equipos = NULL;
+	//size_t cantEquipos;
+	//tlista listaPartidos;
+	//tlista partidosJugados = NULL;
     
     
-	cantEquipos = TraerEquipos(&equipos);
+	mundialx.q_equipos = TraerEquipos(&(mundialx.equipos));
     
-	TraerPartidos(equipos, cantEquipos, &listaPartidos);
+	TraerPartidos(mundialx.equipos, mundialx.q_equipos, &(mundialx.partidosPendientes));
 	
     // hacemos test si los partidos estan bien definidos sino damos un error y decimos el porque...
-	if ( ValidarPartidos(listaPartidos) == TRUE ){
+	if ( ValidarPartidos(mundialx.partidosPendientes) == TRUE ){
         fprintf(stderr, "La validacion de los partidos fue insatisfactoria, revise el archivo de partidos.\n");
         return EXIT_FAILURE;
         // para debug: RecorrerPartidos(listaPartidos);
     }
     
-    tablaPos = CrearVecPos(partidosJugados, equipos, cantEquipos);
+    tablaPos = CrearVecPos(mundialx.partidosJugados, mundialx.equipos, mundialx.q_equipos);
     
-    if (  leerPartidosJugados(&partidosJugados,&listaPartidos,equipos,cantEquipos /*,tablaPos */ ) == TRUE ){
+    if (  leerPartidosJugados(&(mundialx.partidosJugados),&(mundialx.partidosPendientes),mundialx.equipos,mundialx.q_equipos /*,tablaPos */ ) == TRUE ){
         fprintf(stderr, "No se pudo leer desde el archivo, salimos con error.");
         return EXIT_FAILURE;
     }
@@ -104,26 +102,27 @@ int TestFileDump(void){
      }
      */
     
-	ActualizarVecPos(partidosJugados, tablaPos);
+	ActualizarVecPos(mundialx.partidosJugados, tablaPos);
     
 	if (  error  )
 	{
-		ActualizarVecPos(partidosJugados, tablaPos);
+		ActualizarVecPos(mundialx.partidosJugados, tablaPos);
 		printf("Lista de partidos \n");
-		RecorrerPartidos(listaPartidos);
+		RecorrerPartidos(mundialx.partidosPendientes);
 		printf("Lista de partidos jugados \n");
-		RecorrerPartidos(partidosJugados);
+		RecorrerPartidos(mundialx.partidosJugados);
 		printf("Lista de posiciones \n");
 		RecorrerTablaPos(tablaPos);
 	}
 	
     
-    if( GrabarPartidosJugados( &partidosJugados ) == TRUE ){
+    if( GrabarPartidosJugados( &(mundialx.partidosJugados) ) == TRUE ){
         return 1;
     };
     
-    DestruirPartidos( listaPartidos );
-    DestruirEquipos(equipos);
+    DestruirPartidos( mundialx.partidosPendientes );
+    DestruirPartidos( mundialx.partidosJugados );
+    DestruirEquipos(mundialx.equipos);
     
     
     

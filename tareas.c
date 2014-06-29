@@ -599,7 +599,7 @@ void ActualizarVecPos(tlista partidosJugados,tvectorPosiciones * vecPos)
 	}
 }
 
-tvectorPosiciones * CrearVecPos(tlista partidosJugados, tequipo* equipos, int qEquipos)
+tvectorPosiciones * CrearVecPos(tlista partidosJugados, tequipo* equipos, size_t qEquipos)
 {
 	int i;
 

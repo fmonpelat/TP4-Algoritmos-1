@@ -94,8 +94,9 @@ t_bool ValidarPartidos(tlista lista);
 // validar unicos ids de partidos de la lista.
 
 
-// funciones sobre el archivo binario
 
+
+// funciones sobre el archivo binario
 // la funcion devuelve estados de error TRUE o FALSE
 t_bool GrabarPartidosJugados( tlista * );
 
@@ -117,7 +118,7 @@ void  SwitchNodo(tlista  * , tlista * , tlista * );
 t_bool intercambiarNodo(tlista  * listapendientes, tlista * listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido);
 t_bool PartidoJugadoNuevo(char , tlista * , tlista * , tequipo * , size_t , tvectorPosiciones * );
 tequipoPos * BuscarEquipoPorIdEnTablaPos(tvectorPosiciones * equiposEnTabla, char * id);
-tvectorPosiciones * CrearVecPos(tlista partidosJugados, tequipo* equipos, int qEquipos);
+tvectorPosiciones * CrearVecPos(tlista partidosJugados, tequipo* equipos, size_t qEquipos);
 t_bool ModificarTablaPos(tvectorPosiciones * tablaPos, tpartido*partido, int borrar);
 void ActualizarVecPos(tlista partidosJugados, tvectorPosiciones * vecPos);
 void RecorrerTablaPos(tvectorPosiciones *tablaPos);

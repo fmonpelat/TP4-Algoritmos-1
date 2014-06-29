@@ -16,7 +16,7 @@
 #include "tareas.h"
 #include <stdlib.h>
 #include <string.h>
-
+#include "menu.h"
 
 int main(int argc, const char * argv[]){
     
@@ -29,110 +29,174 @@ int main(int argc, const char * argv[]){
     }
     */
     
+    opt_main state_menu=1;
+    opt_subpartido state_submenu_partidos;
+    opt_subsubpartidonuevo state_subsubmenu_partidonuevo;
+    opt_subsubpartidojugado state_subsubmenu_partidojugado;
+    opt_subreportes state_submenu_reportes;
     
-    while ( opt_statement != opt_exit ){
+    while ( state_menu != opt_exit ){
         
         PrintMainMenu();
         
-        while ( opt_statement != opt_exit ){
+        while ( state_menu != opt_exit ){
             
-            scanf("%ul",&opt_statement);
+            scanf("%ul",&state_menu);
             
-            switch(opt_statement){
-                case opt_agregarPersona:
-                    dump_line(stdin);
-                    printf("Por favor ingrese los datos de cada persona \n");
-                    agregarPersona( &Ciudad );
-                    cargarPersona( &Ciudad , Ciudad.q_personas-1 );
-                    printf("Presione cualquier tecla para volver al menu ...");
+            switch(state_menu){
+                    
+                case opt_partidos:
+                    cls();
+                    state_submenu_partidos=1;
+                    while (state_submenu_partidos != opt_subpartidos_return) {
+                        
+                        PrintsubMenuPartidos();
+                        scanf("%ul",&state_submenu_partidos);
+                        
+                        switch (state_submenu_partidos) {
+                                
+                            case opt_partidonuevojugado:
+                                state_subsubmenu_partidonuevo=1;
+                                while (state_subsubmenu_partidonuevo != opt_subpartidosnuevo_return) {
+                                    cls();
+                                    PrintsubsubMenuPartidos();
+                                    scanf("%ul",&state_subsubmenu_partidonuevo);
+                                    switch (state_subsubmenu_partidonuevo) {
+                                        case opt_id:
+                                            //se agrega un nuevo partido por id...
+                                            printf("agrego un nuevo partido por id\n");
+                                            getchar();
+                                            break;
+                                        case opt_equipo:
+                                            //se agrega un nuevo partido por equipo ...
+                                            printf("agrego un nuevo partido por equipo\n");
+                                            getchar();
+                                            break;
+                                        case opt_subpartidosnuevo_return:
+                                            cls();
+                                            break;
+                                        default:
+                                            printf("%s\n","Opcion Invalida");
+                                            dump_line(stdin);
+                                            printf("Presione cualquier tecla para volver al subsubmenu de nuevos partidos ...\n");
+                                            getchar();
+
+                                            break;
+
+                                    }
+                                    dump_line(stdin);
+                                    
+                                }
+                                break;
+                                
+                            case opt_partidojugado:
+                                state_subsubmenu_partidojugado=1;
+                                while (state_subsubmenu_partidojugado != opt_subpartidosjugados_return) {
+                                    cls();
+                                    PrintsubsubMenuPartidosJugados();
+                                    scanf("%ul",&state_subsubmenu_partidojugado);
+                                    switch (state_subsubmenu_partidojugado) {
+                                        case opt_modificar:
+                                            // modificar un partido ya jugado ...
+                                            printf("modifico un partido ya jugado de la lista de jugados\n");
+                                            getchar();
+                                            break;
+                                        case opt_eliminar:
+                                            //eliminar un partido ya jugado ...
+                                            printf("elimino un partido ya jugado de la lista de jugados\n");
+                                            getchar();
+                                            break;
+                                        case opt_subpartidosjugados_return:
+                                            cls();
+                                            break;
+                                        default:
+                                            printf("%s\n","Opcion Invalida");
+                                            dump_line(stdin);
+                                            printf("Presione cualquier tecla para volver al subsubmenu de partidos jugados ...\n");
+                                            getchar();
+                                            cls();
+                                            break;
+
+                                    }
+                                    dump_line(stdin);
+                                }
+                                cls();
+                                break;
+                                
+                            default:
+                                printf("%s\n","Opcion Invalida");
+                                dump_line(stdin);
+                                printf("Presione cualquier tecla para volver al submenu de partidos ...\n");
+                                getchar();
+                                cls();
+                                break;
+
+                        }
+                        
+                        
+                        
+                    }
                     //dump_line(stdin);
                     getchar();
-                    system("clear");
+                    cls();
                     break;
                     
-                case opt_agregarHijo:
-                    
-                    printf("Por favor ingrese el dni del padre: ");
-                    scanf("%lu",&dniPadre);
-                    putc('\n', stdout);
-                    dump_line(stdin);
-                    printf("Ingrese el dni del Hijo: ");
-                    scanf("%lu",&dniHijo);
-                    putc('\n', stdout);
-                    linkHijos(&Ciudad, dniPadre, dniHijo);
-                    padre=searchBydni(&Ciudad, dniPadre);
-                    hijo=searchBydni(&Ciudad, dniHijo);
-                    
-                    if (hijo == NULL) {
-                        fprintf(stderr, "No existen tales DNI\n");
-                    }
-                    else printf("Ahora %s es Hijo de %s\n",hijo->nombre,padre->nombre);
-                    if (hijo==NULL && padre==NULL) {
-                        if (Ciudad.q_personas==0) {
-                            printf("No existe ningun Habitante en la ciudad, puede agregar uno optando por la opcion %d.\n",opt_agregarPersona);
+                case opt_reportes:
+                    state_submenu_reportes=1;
+                    while ( state_submenu_reportes != opt_subreportes_return ) {
+                        cls();
+                        PrintsubMenuReportes();
+                        scanf("%ul",&state_submenu_reportes);
+                        
+                        switch (state_submenu_reportes) {
+                            case opt_equipos:
+                                //reportes por equipos ...
+                                printf("imprimo los reportes por eqipos\n");
+                                getchar();
+                                break;
+                            case opt_partidospendientes:
+                                // reportes de los partidos pendientes ...
+                                printf("imprimo los resportes de la lista de partidos pendientes\n");
+                                getchar();
+                                break;
+                            case opt_tablapos:
+                                // imprimimos la tabla de posicicones por grupos ...
+                                printf("imprimo la taba de posciiones \n");
+                                getchar();
+                                break;
+                            case opt_subreportes_return:
+                                cls();
+                                break;
+                            default:
+                                printf("%s\n","Opcion Invalida");
+                                dump_line(stdin);
+                                printf("Presione cualquier tecla para volver al menu de reportes ...\n");
+                                getchar();
+                                cls();
+                                break;
+
                         }
-                        else printf("Usted ingreso dos DNI que no se encontraron vuelva a intentar nuevamente.\n");
-                    }
-                    putc('\n', stdout);
-                    printf("Presione cualquier tecla para volver al menu ...");
                     dump_line(stdin);
-                    getchar();
-                    system("clear");
-                    break;
-                    
-                case opt_Habitantes:
-                    
-                    if (Ciudad.q_personas!=0) {
-                        
-                        for (i=0; i< Ciudad.q_personas; i++) {
-                            printf("Nombre: %s Apellido: %s DNI: %lu\n",Ciudad.personas[i]->nombre,Ciudad.personas[i]->apellido,Ciudad.personas[i]->dni);
-                        }
                     }
-                    else printf("No existe ningun Habitante en la ciudad, puede agregar uno optando por la opcion %d.\n",opt_agregarPersona);
-                    
-                    putc('\n', stdout);
-                    printf("Presione cualquier tecla para volver al menu ...");
-                    dump_line(stdin);
-                    getchar();
-                    system("clear");
-                    break;
-                    
-                case opt_Imprimir:
-                    
-                    if (Ciudad.q_personas!=0 ) {
-                        
-                        printf("Ingrese el DNI de la persona para imprimir su arbol: \n");
-                        scanf("%lu",&dniPadre);
-                        
-                        /* No es necesario ordenarlo para imprimir el arbol..
-                         */
-                        bubblesort_tpersona( &Ciudad );
-                        imprimirArbol(&Ciudad, searchBydni(&Ciudad, dniPadre) );
-                    }
-                    else printf("No existe ningun Habitante en la ciudad, puede agregar uno optando por la opcion %d.\n",opt_agregarPersona);
-                    
-                    printf("\nPresione cualquier tecla para volver al menu ...");
-                    dump_line(stdin);
-                    getchar();
-                    system("clear");
                     break;
                     
                 case opt_exit:
-                    
+                    cls();
                     break;
                     
                 default:
-                    
                     printf("%s\n","Opcion Invalida");
-                    //dump_line(stdin);
-                    printf("Presione cualquier tecla para volver al menu ...");
+                    dump_line(stdin);
+                    printf("Presione cualquier tecla para volver al menu principal ...\n");
                     getchar();
-                    system("clear");
+                    cls();
                     break;
             }
-            system("clear");
+            cls();
             break;
         }
+
+        
     }
     
     

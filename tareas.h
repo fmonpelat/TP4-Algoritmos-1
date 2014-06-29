@@ -16,6 +16,7 @@
 
 typedef enum bool{ TRUE, FALSE } t_bool;
 
+
 /* PROTOTYPES 
  */
 

@@ -68,6 +68,8 @@ int TestFileDump(void){
     t_bool error=FALSE;
     tmundial mundialx;
     mundialx.equipos=NULL;
+    mundialx.partidosJugados=NULL;
+    mundialx.partidosPendientes=NULL;
 	tvectorPosiciones * tablaPos = NULL;
     
     // traemos de archivo los equipos

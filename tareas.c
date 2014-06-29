@@ -390,8 +390,7 @@ void  SwitchNodo(tlista * partidoAnterior, tlista * partidoAeliminar, tlista * l
 		(*partidoAeliminar) = (*partidoAeliminar)->sig;
 		if (nodo)
 		{
-			while (nodo->sig)
-				nodo = nodo->sig;
+			while (nodo->sig) nodo = nodo->sig;
 			nodo->sig = aux;
 			nodo->sig->sig = NULL;
 		}
@@ -521,7 +520,7 @@ t_bool newPartidoJugado(int idPartido, int gol1, int gol2,tlista * partidosPendi
 
         partido->golesEq1=gol1;
 		partido->golesEq2=gol2;
-		intercambiarNodo(&(*partidosPendientes), &(*partidosJugados), equipos, qEquipos, partido);
+		intercambiarNodo(partidosPendientes, partidosJugados, equipos, qEquipos, partido);
 		//ModificarTablaPos(tablaPos, partido, 0);
 
         return FALSE;

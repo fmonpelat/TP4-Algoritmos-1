@@ -70,8 +70,7 @@ int main(int argc, const char * argv[]){
                                     switch (state_subsubmenu_partidonuevo) {
                                         case opt_id:
                                             // inicio de agregar partido por id
-                                            printf("typee el id del partido jugado");
-                                            
+                                            //printf("typee el id del partido jugado");
                                             printf("agrego un nuevo partido por id\n");
                                             // fin de agregar partido por id
                                             getchar();

@@ -22,8 +22,6 @@ void dump_line(FILE *fp) {
 }
 
 
-
-
 size_t TraerEquipos(tequipo **  equipos){
 
 	if ((*equipos) != NULL) {
@@ -87,9 +85,6 @@ size_t TraerEquipos(tequipo **  equipos){
 	}
 
 	fclose(fpequipos);
-	// para debug sacar despues de pasar las pruebas
-	//printf("%s\n",equipos[1].nombre);
-	//printf("%s\n",equipos[1].id);
 
 	return used_size - 1;
 }
@@ -101,7 +96,6 @@ void DestruirEquipos(tequipo * equipos){
 
 }
 
-// GRABACION DE ARCHIVOS BINARIOS
 
 t_bool GrabarPartidosJugados(tlista * lista_jugados){
     
@@ -148,13 +142,13 @@ t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequi
     
     if (!*listaPartidos) {
         fprintf(stderr, "Error, lista de partidos no inicializada (estado nil).\n");
-        fprintf(stderr, "Hint: utilizo la funcion despues de cargar los partidos?...\n");
+        fprintf(stderr, "Hint: Utilizo la funcion despues de cargar los partidos?...\n");
         return TRUE;
     }
     
     if (!equipos) {
         fprintf(stderr, "Error, array equipos no inicializada (estado nil).\n");
-        fprintf(stderr, "Hint: utilizo la funcion despues de cargar los equipos?...\n");
+        fprintf(stderr, "Hint: Utilizo la funcion despues de cargar los equipos?...\n");
         return TRUE;
     }
     
@@ -178,6 +172,17 @@ t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequi
 	return FALSE;
     
 }
+
+/* para terminar el lunes 30/06 esta funcion pasa string leido por stdin a unsigned long ( para usar en ids y goles para pasar a las funciones ).
+unsigned long userInputUlong(void){
+    
+    char buff[M];
+    unsigned long number;
+    
+    fgets(buff, M, stdin);
+    strtoul( const char          *str, char          **str_end, int base );
+}
+*/
 
 
 // ########## ERIK ######################################
@@ -511,7 +516,6 @@ t_bool newPartidoJugado(int idPartido, int gol1, int gol2,tlista * partidosPendi
             return TRUE;
 		}
 	
-
         partido->golesEq1=gol1;
 		partido->golesEq2=gol2;
 		intercambiarNodo(partidosPendientes, partidosJugados, equipos, qEquipos, partido);
@@ -519,8 +523,6 @@ t_bool newPartidoJugado(int idPartido, int gol1, int gol2,tlista * partidosPendi
 
         return FALSE;
 }
-
-
 
 
 

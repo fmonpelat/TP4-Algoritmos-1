@@ -101,7 +101,83 @@ void DestruirEquipos(tequipo * equipos){
 
 }
 
+// GRABACION DE ARCHIVOS BINARIOS
 
+t_bool GrabarPartidosJugados(tlista * lista_jugados){
+    
+	FILE * fpPartidosJugados;
+	tlista aux;
+	char NombreArchivo[M];
+	strcpy(NombreArchivo, "partidosjugados.dat");
+    
+	int buffer[M_ID];
+    
+    
+	fpPartidosJugados = fopen(NombreArchivo, "wb");
+    
+	if (!fpPartidosJugados) {
+		fprintf(stderr, "Error, no se pudo abrir %s", NombreArchivo);
+		return TRUE;
+	}
+    
+	aux = (*lista_jugados);
+    
+	while (aux) {
+        
+		buffer[0] = aux->dato->idPartido;
+		buffer[1] = aux->dato->golesEq1;
+		buffer[2] = aux->dato->golesEq2;
+        
+		fwrite(buffer, sizeof(int), 3, fpPartidosJugados);
+		fflush(fpPartidosJugados);
+		aux = aux->sig;
+	}
+    
+	fclose(fpPartidosJugados);
+	return FALSE;
+    
+}
+
+t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequipo * equipos, size_t cantEquipos/*, tvectorPosiciones * tablaPos */){
+    
+	FILE * fpPartidosJugados;
+	char NombreArchivo[M];
+	strcpy(NombreArchivo, "partidosjugados.dat");
+	int buffer[M_FILE];
+    
+    
+    if (!*listaPartidos) {
+        fprintf(stderr, "Error, lista de partidos no inicializada (estado nil).\n");
+        fprintf(stderr, "Hint: utilizo la funcion despues de cargar los partidos?...\n");
+        return TRUE;
+    }
+    
+    if (!equipos) {
+        fprintf(stderr, "Error, array equipos no inicializada (estado nil).\n");
+        fprintf(stderr, "Hint: utilizo la funcion despues de cargar los equipos?...\n");
+        return TRUE;
+    }
+    
+	fpPartidosJugados = fopen(NombreArchivo, "rb");
+    
+	if (!fpPartidosJugados) {
+		fprintf(stderr, "Error, no se pudo abrir %s\n", NombreArchivo);
+		return TRUE;
+	}
+    
+	while (fread(buffer, sizeof(int), 1, fpPartidosJugados)) {
+		/*printf("%d ", buffer[0]);*/
+		fread(buffer+1, sizeof(int), 1, fpPartidosJugados);
+		/*printf("%d ", buffer[1]);*/
+		fread(buffer+2, sizeof(int), 1, fpPartidosJugados);
+		/*printf("%d \n", buffer[2]);*/
+        
+        newPartidoJugado(buffer[ID],buffer[GOL1],buffer[GOL2],listaPartidos,listaJugados, equipos, cantEquipos/*, tablaPos */);
+        
+	}
+	return FALSE;
+    
+}
 
 
 // ########## ERIK ######################################
@@ -258,86 +334,6 @@ t_bool ValidarPartidos(tlista lista){
 	return FALSE;
 }
 
-
-
-
-// GRABACION DE ARCHIVOS BINARIOS
-
-t_bool GrabarPartidosJugados(tlista * lista_jugados){
-
-	FILE * fpPartidosJugados;
-	tlista aux;
-	char NombreArchivo[M];
-	strcpy(NombreArchivo, "partidosjugados.dat");
-
-	int buffer[M_ID];
-
-
-	fpPartidosJugados = fopen(NombreArchivo, "wb");
-
-	if (!fpPartidosJugados) {
-		fprintf(stderr, "Error, no se pudo abrir %s", NombreArchivo);
-		return TRUE;
-	}
-
-	aux = (*lista_jugados);
-
-	while (aux) {
-
-		buffer[0] = aux->dato->idPartido;
-		buffer[1] = aux->dato->golesEq1;
-		buffer[2] = aux->dato->golesEq2;
-
-		fwrite(buffer, sizeof(int), 3, fpPartidosJugados);
-		fflush(fpPartidosJugados);
-		aux = aux->sig;
-	}
-
-	fclose(fpPartidosJugados);
-	return FALSE;
-
-}
-
-t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequipo * equipos, size_t cantEquipos/*, tvectorPosiciones * tablaPos */){
-    
-	FILE * fpPartidosJugados;
-	char NombreArchivo[M];
-	strcpy(NombreArchivo, "partidosjugados.dat");
-	int buffer[M_FILE];
-
-    
-    if (!*listaPartidos) {
-        fprintf(stderr, "Error, lista de partidos no inicializada (estado nil).\n");
-        fprintf(stderr, "Hint: utilizo la funcion despues de cargar los partidos?...\n");
-        return TRUE;
-    }
-    
-    if (!equipos) {
-        fprintf(stderr, "Error, array equipos no inicializada (estado nil).\n");
-        fprintf(stderr, "Hint: utilizo la funcion despues de cargar los equipos?...\n");
-        return TRUE;
-    }
-    
-	fpPartidosJugados = fopen(NombreArchivo, "rb");
-
-	if (!fpPartidosJugados) {
-		fprintf(stderr, "Error, no se pudo abrir %s\n", NombreArchivo);
-		return TRUE;
-	}
-
-	while (fread(buffer, sizeof(int), 1, fpPartidosJugados)) {
-		/*printf("%d ", buffer[0]);*/
-		fread(buffer+1, sizeof(int), 1, fpPartidosJugados);
-		/*printf("%d ", buffer[1]);*/
-		fread(buffer+2, sizeof(int), 1, fpPartidosJugados);
-		/*printf("%d \n", buffer[2]);*/
-        
-        newPartidoJugado(buffer[ID],buffer[GOL1],buffer[GOL2],listaPartidos,listaJugados, equipos, cantEquipos/*, tablaPos */);
-        
-	}
-	return FALSE;
-
-}
 
 
 
@@ -499,8 +495,6 @@ t_bool PartidoJugadoNuevo(char opcion, tlista * partidosPendientes, tlista * par
 	return error;
 }
 
-
-// creo la funcion de PartidoJugadoNuevo sin la interaccion del user - fmonpelat -
 
 t_bool newPartidoJugado(int idPartido, int gol1, int gol2,tlista * partidosPendientes, tlista * partidosJugados, tequipo * equipos, size_t qEquipos/*, tvectorPosiciones *tablaPos*/){
     
@@ -755,7 +749,26 @@ t_bool ModificarTablaPos(tvectorPosiciones * tablaPos, tpartido * partido, int b
 }
 
 
-
+t_bool ModificarPartidoJugado(tlista listajugados, tpartido * partido, int gol1,int gol2, tvectorPosiciones * tablaPos){
+    
+    tnodo * aux = listajugados;
+    
+    while (aux){
+        
+        if( aux ->dato->idPartido == partido->idPartido){
+            
+            partido->golesEq1=gol1;
+            partido->golesEq2=gol2;
+            ActualizarVecPos(listajugados,tablaPos); // actualuiza puntos
+            return FALSE;
+        }
+        aux=aux->sig;
+    }
+    
+    fprintf(stderr,"No se pudo modificar el partido %d", partido->idPartido);
+    return TRUE;
+    
+}
 
 
 

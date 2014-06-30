@@ -123,10 +123,76 @@ int TestFileDump(void){
     DestruirPartidos( mundialx.partidosJugados );
     DestruirEquipos(mundialx.equipos);
     
+    return 0;
+}
+
+int TestModificarPartido(void){
+    
+    t_bool error=FALSE;
+    tmundial mundialx;
+    mundialx.equipos=NULL;
+    mundialx.partidosJugados=NULL;
+    mundialx.partidosPendientes=NULL;
+	tvectorPosiciones * tablaPos = NULL;
+    tpartido * partidoaModificar;
+    
+    // traemos de archivo los equipos
+	mundialx.q_equipos = TraerEquipos(&(mundialx.equipos));
+    
+    // traemos de archivo la lista de partidos
+	TraerPartidos(mundialx.equipos, mundialx.q_equipos, &(mundialx.partidosPendientes));
+	
+    // hacemos test si los partidos estan bien definidos sino damos un error y decimos el porque...
+	if ( ValidarPartidos(mundialx.partidosPendientes) == TRUE ){
+        fprintf(stderr, "La validacion de los partidos fue insatisfactoria, revise el archivo de partidos.\n");
+        return EXIT_FAILURE;
+        // para debug: RecorrerPartidos(listaPartidos);
+    }
+    
+    tablaPos = CrearVecPos(mundialx.partidosJugados, mundialx.equipos, mundialx.q_equipos);
+    
+    if (  leerPartidosJugados(&(mundialx.partidosJugados),&(mundialx.partidosPendientes),mundialx.equipos,mundialx.q_equipos /*,tablaPos */ ) == TRUE ){
+        fprintf(stderr, "No se pudo leer desde el archivo, salimos con error.");
+        return EXIT_FAILURE;
+    }
     
     
+    /* if ( (error = newPartidoJugado(1,2,4,&listaPartidos,&partidosJugados, equipos, cantEquipos, tablaPos))==TRUE ){
+     fprintf(stderr, "Error");
+     }
+     if ( (error = newPartidoJugado(2,1,1,&listaPartidos,&partidosJugados, equipos, cantEquipos, tablaPos))==TRUE ){
+     fprintf(stderr, "Error");
+     }
+     */
+    
+	ActualizarVecPos(mundialx.partidosJugados, tablaPos);
+    
+	if ( error ){
+        
+		printf("Lista de partidos jugados \n");
+		RecorrerPartidos(mundialx.partidosJugados);
+		printf("Lista de posiciones \n");
+		RecorrerTablaPos(tablaPos);
+	}
+    
+	partidoaModificar = BuscarPartidoPorId(mundialx.partidosJugados, 1);
+    ModificarPartidoJugado(mundialx.partidosJugados, partidoaModificar, 8, 8, tablaPos);
+    
+    printf("Lista de partidos jugados despues de la modificacion \n");
+    RecorrerPartidos(mundialx.partidosJugados);
+
+    if( GrabarPartidosJugados( &(mundialx.partidosJugados) ) == TRUE ){
+        return 1;
+    };
+    
+    DestruirPartidos( mundialx.partidosPendientes );
+    DestruirPartidos( mundialx.partidosJugados );
+    DestruirEquipos(mundialx.equipos);
     
     return 0;
+    
+    
+    
 }
 
 

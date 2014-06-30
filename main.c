@@ -21,13 +21,19 @@
 int main(int argc, const char * argv[]){
     
     
-	/*TestEquipos();
+	/*
+    TestEquipos();
     TestTraerPartidos();
-	
+	// Test de modificacion de archivos
     if (TestFileDump()) {
         return EXIT_FAILURE;
     }
+    // Test de modificacion de un partido
+    if ( TestModificarPartido() ) {
+        return EXIT_FAILURE;
+    }
     */
+    
     
     opt_main state_menu=1;
     opt_subpartido state_submenu_partidos;
@@ -63,8 +69,11 @@ int main(int argc, const char * argv[]){
                                     scanf("%ul",&state_subsubmenu_partidonuevo);
                                     switch (state_subsubmenu_partidonuevo) {
                                         case opt_id:
-                                            //se agrega un nuevo partido por id...
+                                            // inicio de agregar partido por id
+                                            printf("typee el id del partido jugado");
+                                            
                                             printf("agrego un nuevo partido por id\n");
+                                            // fin de agregar partido por id
                                             getchar();
                                             break;
                                         case opt_equipo:
@@ -199,7 +208,7 @@ int main(int argc, const char * argv[]){
         
     }
     
-    
+
     
     return EXIT_SUCCESS;
     

@@ -125,7 +125,7 @@ void TestBusquedaPartidos( tlista );
 
 void  SwitchNodo(tlista  * , tlista * , tlista * );
 t_bool intercambiarNodo(tlista  * listapendientes, tlista * listajugados, tequipo * equipos, size_t sizeEquipos, tpartido * partido);
-
+t_bool ModificarPartidoJugado(tlista listajugados, tpartido * partido, int gol1,int gol2, tvectorPosiciones * tablaPos);
 
 /*
 ModificarPartidosJugado

@@ -91,7 +91,8 @@ t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequi
 int TestFileDump(void);
 int TestModificarPartido(void);
 unsigned long userInputUlong(void);
-
+//API
+t_bool leerPartidosAPI(tlista * listaJugados , tlista * listaPartidos, tequipo * equipos, size_t cantEquipos,char * NombreArchivo,tvectorPosiciones * tablaPos);
 
 
 //ERIK

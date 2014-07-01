@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "tareas.h"
 #include "menu.h"
 
@@ -29,6 +30,7 @@ void PrintMainMenu(void){
     printf("menu principal\n");
     printf("1) Partidos\n");
     printf("2) Reportes\n");
+    printf("3) API (Opcion Avanzada)\n");
     printf("Presione 0 para salir... \n\n");
     printf("##########################################################################\n");
     

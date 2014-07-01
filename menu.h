@@ -10,7 +10,7 @@
 #define TP4_Algoritmos_1_menu_h
 
 // main menu
-typedef enum opt{ opt_exit,opt_partidos,opt_reportes } opt_main;
+typedef enum opt{ opt_exit,opt_partidos,opt_reportes,opt_api} opt_main;
     // submenu partidos
     typedef enum option_subpartidos{ opt_subpartidos_return,opt_partidonuevojugado,opt_partidojugado } opt_subpartido;
         // subsubmenu partidos

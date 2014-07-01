@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
 #include "tareas.h"
 
@@ -188,6 +189,58 @@ unsigned long userInputUlong(void){
     
     return number;
 }
+
+//API CSV carga
+
+t_bool leerPartidosAPI(tlista * listaJugados , tlista * listaPartidos, tequipo * equipos, size_t cantEquipos,char * NombreArchivo,tvectorPosiciones * tablaPos){
+    
+	FILE * fpPartidosAPI;
+    tpartido * partidoAux;
+    int idPartido = 0;
+    char idEquipo1[M_ID];
+    char idEquipo2[M_ID];
+    int dia = 0, mes = 0, anio = 0;
+    int gol1,gol2;
+    
+    
+    if (!*listaPartidos) {
+        fprintf(stderr, "Error, lista de partidos no inicializada (estado nil).\n");
+        fprintf(stderr, "Hint: Utilizo la funcion despues de cargar los partidos?...\n");
+        return TRUE;
+    }
+    
+    if (!equipos) {
+        fprintf(stderr, "Error, array equipos no inicializada (estado nil).\n");
+        fprintf(stderr, "Hint: Utilizo la funcion despues de cargar los equipos?...\n");
+        return TRUE;
+    }
+    
+	fpPartidosAPI = fopen(NombreArchivo, "rb");
+    
+	if (!fpPartidosAPI) {
+		fprintf(stderr, "Error, no se pudo abrir %s\n", NombreArchivo);
+		return TRUE;
+	}
+    
+    while (!feof(fpPartidosAPI)){
+        
+        fscanf(fpPartidosAPI, "%d,%2c,%2c,%d/%d/%d,%d,%d\n", &idPartido, (char *)&idEquipo1, (char *)&idEquipo2, &dia, &mes, &anio,&gol1,&gol2);
+        
+        if ( (partidoAux=BuscarPartidoPorId(*listaPartidos, (int)idPartido ) ) == NULL ){
+            if(  (partidoAux=BuscarPartidoPorId(*listaJugados, (int)idPartido )) == NULL ){
+                fprintf(stderr,"No existe el id (%d) de ese partido!\n",idPartido);
+                fprintf(stderr, "Archivo de API CSV Malformado verifique y pruebe nuevamente.\n");
+                return TRUE;
+            }
+            ModificarPartidoJugado(*listaJugados, partidoAux, gol1, gol2, tablaPos);
+        }
+        else newPartidoJugadoXP(partidoAux, gol1, gol2, listaPartidos, listaJugados, equipos, cantEquipos);
+        
+	}
+	return FALSE;
+    
+}
+
 
 
 

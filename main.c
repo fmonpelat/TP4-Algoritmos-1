@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
 #include "tareas.h"
 #include "menu.h"
@@ -34,30 +35,38 @@ int main(int argc, const char * argv[]){
     }
     
     
-    /* ######################### VARIABLES ########################## */
+    /* 
+     ######################### VARIABLES ########################## */
     unsigned long id, gol1,gol2;
     tpartido * partidoAux;
-    /* ############################################################## */
+    char NombreArchivoAPI[M];
+    /* 
+     ############################################################## */
     
-    /*####################### MUNDIAL DEFS ########################## */
+    /*
+     ####################### MUNDIAL DEFS ########################## */
     tmundial Brasil2014;
     Brasil2014.partidosJugados=NULL;
     Brasil2014.partidosPendientes=NULL;
     Brasil2014.q_equipos=0;
     Brasil2014.equipos=NULL;
     tvectorPosiciones * tablaPos= NULL;
-    /* ############################################################## */
+    /* 
+     ############################################################## */
     
-    /* traemos de archivo los equipos */
+    /* 
+     traemos de archivo los equipos */
 	Brasil2014.q_equipos = TraerEquipos(&(Brasil2014.equipos));
     
-    /* traemos de archivo la lista de partidos */
+    /* 
+     traemos de archivo la lista de partidos */
 	if(  TraerPartidos(Brasil2014.equipos, Brasil2014.q_equipos, &(Brasil2014.partidosPendientes))==TRUE  ){
         fprintf(stderr, "Error General de archivo.\n");
         return 1;
     }
 	
-    /* validamos si los partidos estan bien definidos sino damos un error y decimos el porque... */
+    /* 
+     validamos si los partidos estan bien definidos sino damos un error y decimos el porque... */
 	if ( ValidarPartidos(Brasil2014.partidosPendientes) == TRUE ){
         fprintf(stderr, "La validacion de los partidos fue insatisfactoria, revise el archivo de partidos.\n");
         return EXIT_FAILURE;
@@ -69,12 +78,14 @@ int main(int argc, const char * argv[]){
         return EXIT_FAILURE;
     }
     
-    /* actuaizamos la tabla de posiciones */
+    /* 
+     actuaizamos la tabla de posiciones */
     ActualizarVecPos(Brasil2014.partidosJugados, tablaPos);
     
     
     
-    /* ############### BEGIN USER MENU ################################################# */
+    /* 
+     ############### BEGIN USER MENU ################################################# */
     
     opt_main state_menu=1;
     opt_subpartido state_submenu_partidos;
@@ -173,6 +184,25 @@ int main(int argc, const char * argv[]){
                                         case opt_modificar:
                                             // modificar un partido ya jugado ...
                                             printf("modifico un partido ya jugado de la lista de jugados\n");
+                                            printf("Ingrese el id del partido jugado que quiere modificar: ");
+                                            id=userInputUlong();
+                                            if ( (partidoAux=BuscarPartidoPorId(Brasil2014.partidosJugados, (int)id ) ) == NULL ){
+                                                if(  (partidoAux=BuscarPartidoPorId(Brasil2014.partidosPendientes, (int)id )) == NULL ){
+                                                    fprintf(stderr,"No existe el id (%lu) de ese partido!\n",id);
+                                                    getchar();
+                                                    break;
+                                                }
+                                                printf("Ese partido no se jugo todavia.\n Para modificar ingrese uno que ya se haya jugado.\n");
+                                                getchar();
+                                                break;
+                                            }
+                                            printf("\nIngrese los goles del equipo 1 ( %s ): ",partidoAux->equipo1->nombre);
+                                            gol1=userInputUlong();
+                                            printf("\nIngrese los goles del equipo 1 ( %s ): ",partidoAux->equipo2->nombre);
+                                            gol2=userInputUlong();
+                                            ModificarPartidoJugado(Brasil2014.partidosJugados, partidoAux, (int)gol1, (int)gol2, tablaPos);
+                                            printf("se modifico el partido:\n ");
+                                            printf("%s  %d vs %s %d \n",partidoAux->equipo1->nombre,partidoAux->golesEq1,partidoAux->equipo2->nombre,partidoAux->golesEq2);
                                             getchar();
                                             break;
                                         case opt_eliminar:
@@ -258,11 +288,27 @@ int main(int argc, const char * argv[]){
                     //dump_line(stdin);
                     }
                     break;
+                case opt_api:
+                    printf("Opcion de carga avanzada mediante archivo de partidos en csv con sus goles\n");
+                    printf("Se debe de ingresar en el siguiente formato:\n");
+                    printf("1,A1,A2,12/06/2014,golA1,golA2\n");
+                    printf("Ingrese el nombre del archivo: (para salir escriba salir) \n");
+                    fgets(NombreArchivoAPI, M+1, stdin);
+                    NombreArchivoAPI[strlen(NombreArchivoAPI)-1]='\0';
+                    if ( !strcmp(NombreArchivoAPI, "salir") ) {
+                        cls();
+                        break;
+                    }
+                    if( leerPartidosAPI(&Brasil2014.partidosJugados, &Brasil2014.partidosPendientes, Brasil2014.equipos, Brasil2014.q_equipos,NombreArchivoAPI,tablaPos)==TRUE)break;
+                    ActualizarVecPos(Brasil2014.partidosJugados, tablaPos);
+                    printf("Se cargaron satisfactoriamente los partidos.\n");
+                    getchar();
+                    break;
                     
                 case opt_exit:
                     cls();
                     break;
-                    
+                
                 default:
                     printf("%s\n","Opcion Invalida");
                     dump_line(stdin);
@@ -278,7 +324,8 @@ int main(int argc, const char * argv[]){
         
     }
     
-    /* ###################### END USER MENU ############################################## */
+    /* 
+     ###################### END USER MENU ############################################## */
     
     if( GrabarPartidosJugados( &(Brasil2014.partidosJugados) ) == TRUE ){
         return 1;

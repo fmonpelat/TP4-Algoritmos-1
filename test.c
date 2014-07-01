@@ -261,6 +261,7 @@ int TestALL(void){
     // actualizamos la tabla de posiciones.
 	ActualizarVecPos(mundialx.partidosJugados, tablaPos);
     
+    
 	if ( error ){
         printf("Lista de equipos del mundial\n");
         for (counterEquipos=0; counterEquipos<mundialx.q_equipos; counterEquipos++) {
@@ -272,16 +273,21 @@ int TestALL(void){
 		RecorrerTablaPos(tablaPos);
 	}
     
+    // modificamos un partido
 	partidoaModificar = BuscarPartidoPorId(mundialx.partidosJugados, 1);
     ModificarPartidoJugado(mundialx.partidosJugados, partidoaModificar, 8, 8, tablaPos);
     
+    // imprimimos devuelta para mostrar lo que se modifico.
     printf("Lista de partidos jugados despues de la modificacion \n");
     RecorrerPartidos(mundialx.partidosJugados);
     
+    // grabamos el binario
     if( GrabarPartidosJugados( &(mundialx.partidosJugados) ) == TRUE ){
         return 1;
     };
     
+    
+    // destruimos todo lo que pedimos de memoria dinamica
     DestruirPartidos( mundialx.partidosPendientes );
     DestruirPartidos( mundialx.partidosJugados );
     DestruirEquipos(mundialx.equipos);

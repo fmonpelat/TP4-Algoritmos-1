@@ -13,27 +13,68 @@
 
 
 #include <stdio.h>
-#include "tareas.h"
 #include <stdlib.h>
 #include <string.h>
+#include "tareas.h"
 #include "menu.h"
 
 int main(int argc, const char * argv[]){
     
     
-	/*
+    /*
     TestEquipos();
     TestTraerPartidos();
 	// Test de modificacion de archivos
     if (TestFileDump()) {
         return EXIT_FAILURE;
     }
-    // Test de modificacion de un partido
+    // test de modificacion de un partido
     if ( TestModificarPartido() ) {
         return EXIT_FAILURE;
     }
-    */
     
+    
+    /* ######################### VARIABLES ########################## */
+    unsigned long id, gol1,gol2;
+    tpartido * partidoAux;
+    /* ############################################################## */
+    
+    /*####################### MUNDIAL DEFS ########################## */
+    tmundial Brasil2014;
+    Brasil2014.partidosJugados=NULL;
+    Brasil2014.partidosPendientes=NULL;
+    Brasil2014.q_equipos=0;
+    Brasil2014.equipos=NULL;
+    tvectorPosiciones * tablaPos= NULL;
+    /* ############################################################## */
+    
+    /* traemos de archivo los equipos */
+	Brasil2014.q_equipos = TraerEquipos(&(Brasil2014.equipos));
+    
+    /* traemos de archivo la lista de partidos */
+	if(  TraerPartidos(Brasil2014.equipos, Brasil2014.q_equipos, &(Brasil2014.partidosPendientes))==TRUE  ){
+        fprintf(stderr, "Error General de archivo.\n");
+        return 1;
+    }
+	
+    /* validamos si los partidos estan bien definidos sino damos un error y decimos el porque... */
+	if ( ValidarPartidos(Brasil2014.partidosPendientes) == TRUE ){
+        fprintf(stderr, "La validacion de los partidos fue insatisfactoria, revise el archivo de partidos.\n");
+        return EXIT_FAILURE;
+    }
+    
+    tablaPos = CrearVecPos(Brasil2014.partidosJugados, Brasil2014.equipos, Brasil2014.q_equipos);
+    
+    if (  leerPartidosJugados(&(Brasil2014.partidosJugados),&(Brasil2014.partidosPendientes),Brasil2014.equipos,Brasil2014.q_equipos /*,tablaPos */ ) == TRUE ){
+        return EXIT_FAILURE;
+    }
+    
+    /* actuaizamos la tabla de posiciones */
+    ActualizarVecPos(Brasil2014.partidosJugados, tablaPos);
+    
+    
+    
+    /* ############### BEGIN USER MENU ################################################# */
     
     opt_main state_menu=1;
     opt_subpartido state_submenu_partidos;
@@ -47,7 +88,8 @@ int main(int argc, const char * argv[]){
         
         while ( state_menu != opt_exit ){
             
-            scanf("%ul",&state_menu);
+            state_menu=(opt_main)userInputUlong();
+            //scanf("%ul",&state_menu);
             
             switch(state_menu){
                     
@@ -57,7 +99,8 @@ int main(int argc, const char * argv[]){
                     while (state_submenu_partidos != opt_subpartidos_return) {
                         
                         PrintsubMenuPartidos();
-                        scanf("%ul",&state_submenu_partidos);
+                        state_submenu_partidos=(opt_subpartido)userInputUlong();
+                        //scanf("%ul",&state_submenu_partidos);
                         
                         switch (state_submenu_partidos) {
                                 
@@ -66,13 +109,35 @@ int main(int argc, const char * argv[]){
                                 while (state_subsubmenu_partidonuevo != opt_subpartidosnuevo_return) {
                                     cls();
                                     PrintsubsubMenuPartidos();
-                                    scanf("%ul",&state_subsubmenu_partidonuevo);
+                                    state_subsubmenu_partidonuevo=(opt_subsubpartidonuevo)userInputUlong();
+                                    //scanf("%ul",&state_subsubmenu_partidonuevo);
                                     switch (state_subsubmenu_partidonuevo) {
                                         case opt_id:
                                             // inicio de agregar partido por id
-                                            //printf("typee el id del partido jugado");
-                                            printf("agrego un nuevo partido por id\n");
+                                            printf("Ingrese el id del partido jugado: ");
+                                            id=userInputUlong();
+                                            if ( (partidoAux=BuscarPartidoPorId(Brasil2014.partidosPendientes, (int)id ) ) == NULL ){
+                                                if(  (partidoAux=BuscarPartidoPorId(Brasil2014.partidosJugados, (int)id )) == NULL ){
+                                                    fprintf(stderr,"No existe el id (%lu) de ese partido!\n",id);
+                                                    getchar();
+                                                    break;
+                                                }
+                                                printf("Ese partido ya se jugo.\n Por Favor utilize el submenu de partidos jugados opcion 1) Modificar.\n");
+                                                getchar();
+                                                break;
+                                            }
+                                            printf("\nIngrese los goles del equipo 1 ( %s ): ",partidoAux->equipo1->nombre);
+                                            gol1=userInputUlong();
+                                            printf("\nIngrese los goles del equipo 1 ( %s ): ",partidoAux->equipo2->nombre);
+                                            gol2=userInputUlong();
+                                            if ( newPartidoJugadoXP(partidoAux,(int)gol1,(int)gol2,&Brasil2014.partidosPendientes,&Brasil2014.partidosJugados, Brasil2014.equipos, Brasil2014.q_equipos) == TRUE ){
+                                                fprintf(stderr, "Error, al modificar el partido.\n");
+                                                getchar();
+                                                break;
+                                            }
+                                            ActualizarVecPos(Brasil2014.partidosJugados, tablaPos);
                                             // fin de agregar partido por id
+                                            printf("Presione cualquier tecla para volver al menu ...\n");
                                             getchar();
                                             break;
                                         case opt_equipo:
@@ -92,7 +157,7 @@ int main(int argc, const char * argv[]){
                                             break;
 
                                     }
-                                    dump_line(stdin);
+                                    //dump_line(stdin);
                                     
                                 }
                                 break;
@@ -102,7 +167,8 @@ int main(int argc, const char * argv[]){
                                 while (state_subsubmenu_partidojugado != opt_subpartidosjugados_return) {
                                     cls();
                                     PrintsubsubMenuPartidosJugados();
-                                    scanf("%ul",&state_subsubmenu_partidojugado);
+                                    state_subsubmenu_partidojugado=(opt_subsubpartidojugado)userInputUlong();
+                                    //scanf("%ul",&state_subsubmenu_partidojugado);
                                     switch (state_subsubmenu_partidojugado) {
                                         case opt_modificar:
                                             // modificar un partido ya jugado ...
@@ -126,8 +192,12 @@ int main(int argc, const char * argv[]){
                                             break;
 
                                     }
-                                    dump_line(stdin);
+                                    //dump_line(stdin);
                                 }
+                                cls();
+                                break;
+                                
+                            case opt_subpartidos_return:
                                 cls();
                                 break;
                                 
@@ -145,7 +215,7 @@ int main(int argc, const char * argv[]){
                         
                     }
                     //dump_line(stdin);
-                    getchar();
+                    //getchar();
                     cls();
                     break;
                     
@@ -154,7 +224,8 @@ int main(int argc, const char * argv[]){
                     while ( state_submenu_reportes != opt_subreportes_return ) {
                         cls();
                         PrintsubMenuReportes();
-                        scanf("%ul",&state_submenu_reportes);
+                        state_submenu_reportes=(opt_subreportes)userInputUlong();
+                        //scanf("%ul",&state_submenu_reportes);
                         
                         switch (state_submenu_reportes) {
                             case opt_equipos:
@@ -163,13 +234,13 @@ int main(int argc, const char * argv[]){
                                 getchar();
                                 break;
                             case opt_partidospendientes:
-                                // reportes de los partidos pendientes ...
-                                printf("imprimo los resportes de la lista de partidos pendientes\n");
+                                printf("Lista de Partidos Pendientes: \n");
+                                RecorrerPartidos(Brasil2014.partidosPendientes);
                                 getchar();
                                 break;
                             case opt_tablapos:
-                                // imprimimos la tabla de posicicones por grupos ...
-                                printf("imprimo la taba de posciiones \n");
+                                printf("Lista de Posiciones por grupos: \n");
+                                RecorrerTablaPos(tablaPos);
                                 getchar();
                                 break;
                             case opt_subreportes_return:
@@ -184,7 +255,7 @@ int main(int argc, const char * argv[]){
                                 break;
 
                         }
-                    dump_line(stdin);
+                    //dump_line(stdin);
                     }
                     break;
                     
@@ -207,6 +278,16 @@ int main(int argc, const char * argv[]){
         
     }
     
+    /* ###################### END USER MENU ############################################## */
+    
+    if( GrabarPartidosJugados( &(Brasil2014.partidosJugados) ) == TRUE ){
+        return 1;
+    };
+    
+    DestruirPartidos( Brasil2014.partidosPendientes );
+    DestruirPartidos( Brasil2014.partidosJugados );
+    DestruirEquipos(Brasil2014.equipos);
+
 
     
     return EXIT_SUCCESS;

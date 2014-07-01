@@ -25,7 +25,7 @@ void dump_line(FILE *fp) {
 size_t TraerEquipos(tequipo **  equipos){
 
 	if ((*equipos) != NULL) {
-		fprintf(stderr, "Error, por favor ingrese un puntero equipo nulo");
+		fprintf(stderr, "Error, por favor ingrese un puntero equipo nulo\n");
 		return 0;
 	}
 
@@ -39,14 +39,14 @@ size_t TraerEquipos(tequipo **  equipos){
 	char* pstr2;
 
 	if (!(fpequipos = fopen("grupos.txt", "r"))){
-		fprintf(stderr, "Error, no se pudo abrir grupos.txt, existe?");
+		fprintf(stderr, "Error, no se pudo abrir grupos.txt, existe?\n");
 		return 0;
 	}
 
 	/* pedimos memoria por primera vez antes de reallocar si es que necesitamos memoria.
 	 */
 	if (!(*equipos = (tequipo*)malloc(sizeof(tequipo)*init_chop))) {
-		fprintf(stderr, "Error, could not find memory");
+		fprintf(stderr, "Error, could not find memory\n");
 		return 0;
 	}
 
@@ -59,7 +59,7 @@ size_t TraerEquipos(tequipo **  equipos){
 		if (used_size == alloc_size) {
 
 			if (!(aux = (tequipo *)realloc(*equipos, sizeof(tequipo)*(alloc_size + chop_size)))) {
-				fprintf(stderr, "Error, could not find memory");
+				fprintf(stderr, "Error, could not find memory\n");
 				free(*equipos);
 				*equipos = NULL;
 				return 0;
@@ -110,23 +110,24 @@ t_bool GrabarPartidosJugados(tlista * lista_jugados){
 	fpPartidosJugados = fopen(NombreArchivo, "wb");
     
 	if (!fpPartidosJugados) {
-		fprintf(stderr, "Error, no se pudo abrir %s", NombreArchivo);
+		fprintf(stderr, "Error, no se pudo abrir %s\n", NombreArchivo);
 		return TRUE;
 	}
     
-	aux = (*lista_jugados);
-    
-	while (aux) {
+    // prevenimos un sigsegv por si le pasamos null como lista.
+    if (lista_jugados) {
+        aux = (*lista_jugados);
+        while (aux) {
         
-		buffer[0] = aux->dato->idPartido;
-		buffer[1] = aux->dato->golesEq1;
-		buffer[2] = aux->dato->golesEq2;
+            buffer[0] = aux->dato->idPartido;
+            buffer[1] = aux->dato->golesEq1;
+            buffer[2] = aux->dato->golesEq2;
         
-		fwrite(buffer, sizeof(int), 3, fpPartidosJugados);
-		fflush(fpPartidosJugados);
-		aux = aux->sig;
-	}
-    
+            fwrite(buffer, sizeof(int), 3, fpPartidosJugados);
+            fflush(fpPartidosJugados);
+            aux = aux->sig;
+        }
+    }
 	fclose(fpPartidosJugados);
 	return FALSE;
     
@@ -156,6 +157,8 @@ t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequi
     
 	if (!fpPartidosJugados) {
 		fprintf(stderr, "Error, no se pudo abrir %s\n", NombreArchivo);
+        fprintf(stderr, "Si es la primera vez que corre el programa ejecute devuelta por favor\n");
+        GrabarPartidosJugados(NULL);
 		return TRUE;
 	}
     
@@ -173,22 +176,25 @@ t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequi
     
 }
 
-/* para terminar el lunes 30/06 esta funcion pasa string leido por stdin a unsigned long ( para usar en ids y goles para pasar a las funciones ).
 unsigned long userInputUlong(void){
     
     char buff[M];
     unsigned long number;
+    char ** ptr;
     
+    //dump_line(stdin);
     fgets(buff, M, stdin);
-    strtoul( const char          *str, char          **str_end, int base );
+    number=strtoul( buff, ptr, 10);
+    
+    return number;
 }
-*/
+
 
 
 // ########## ERIK ######################################
 
 
-size_t TraerPartidos(tequipo * equipos, size_t sizeEquipos, tlista * lista)
+t_bool TraerPartidos(tequipo * equipos, size_t sizeEquipos, tlista * lista)
 {
 	//aca hacemos que lo apuntado por lista que es un tnodo * sea null.
 	(*lista) = NULL;
@@ -197,8 +203,8 @@ size_t TraerPartidos(tequipo * equipos, size_t sizeEquipos, tlista * lista)
 
 	if (!(fileReader = fopen("partidos.txt", "r")))
 	{
-		puts("No existe el archivo partidos.txt");
-		return 1;
+		fprintf(stderr,"No existe el archivo partidos.txt\n");
+		return TRUE;
 	}
 
 	while (!feof(fileReader))
@@ -221,7 +227,7 @@ size_t TraerPartidos(tequipo * equipos, size_t sizeEquipos, tlista * lista)
 	/*Le asigno la cadena a la lista*/
 	//(*lista) = aux;
 
-	return 1;
+	return FALSE;
 }
 
 void AgregarNodoEquipo(tnodo ** nodo, tequipo* equipos, size_t sizeEquipos, int idPartido, char * idEquipo1, char * idEquipo2, int dia, int mes, int anio)
@@ -286,15 +292,16 @@ tequipo * BuscarEquipoPorId(tequipo * equipos, char * id, size_t size){
 
 void DestruirPartidos(tnodo * nodo){
 
-
-	if (nodo->sig == NULL) {
-		free(nodo->dato);
-		nodo->dato = NULL;
-		free(nodo);
-		nodo = NULL;
-	}
-	else DestruirPartidos(nodo->sig);
-
+    //prevengo un super bug con el if(nodo)
+    if (nodo) {
+        if (nodo->sig == NULL) {
+            free(nodo->dato);
+            nodo->dato = NULL;
+            free(nodo);
+            nodo = NULL;
+        }
+        else DestruirPartidos(nodo->sig);
+    }
 
 }
 
@@ -524,6 +531,13 @@ t_bool newPartidoJugado(int idPartido, int gol1, int gol2,tlista * partidosPendi
         return FALSE;
 }
 
+t_bool newPartidoJugadoXP(tpartido * partido, int gol1, int gol2,tlista * partidosPendientes, tlista * partidosJugados, tequipo * equipos, size_t qEquipos){
+	
+    partido->golesEq1=gol1;
+    partido->golesEq2=gol2;
+    intercambiarNodo(partidosPendientes, partidosJugados, equipos, qEquipos, partido);
+    return FALSE;
+}
 
 
 

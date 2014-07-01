@@ -82,16 +82,20 @@ void dump_line(FILE *);
 /* para agregar un nuevo partido a la lista de jugados. */
 t_bool newPartidoJugado(int idPartido, int gol1, int gol2,tlista * partidosPendientes, tlista * partidosJugados, tequipo * equipos, size_t qEquipos/*, tvectorPosiciones *tablaPos*/); /* asigna un nuevo partido a la lista con los goles de los 2 equipos pasandole el id de partido */
 
+t_bool newPartidoJugadoXP(tpartido * partido ,int gol1, int gol2,tlista * partidosPendientes, tlista * partidosJugados, tequipo * equipos, size_t qEquipos); /* asigna un nuevo partido a la lista con los goles de los 2 equipos pasandole el puntero al partido*/
+
 /* funciones sobre el archivo binario. */
 t_bool GrabarPartidosJugados( tlista * );
 typedef enum bool_partido { ID , GOL1 , GOL2 } int_filepartido;
 t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequipo * equipos, size_t cantEquipos/*, tvectorPosiciones * tablaPos */);
 int TestFileDump(void);
+int TestModificarPartido(void);
+unsigned long userInputUlong(void);
 
 
 
 //ERIK
-size_t TraerPartidos( tequipo * ,size_t , tlista * );
+t_bool TraerPartidos( tequipo * ,size_t , tlista * );
 void TestTraerPartidos( void );
 void DestruirPartidos( tnodo * nodo); /*libera la memoria */
 void AgregarNodoEquipo( tnodo ** , tequipo* ,size_t , int , char * , char * , int , int , int );

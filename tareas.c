@@ -37,7 +37,7 @@ size_t TraerEquipos(tequipo **  equipos){
 	size_t i = 0;
 	char str[M_ID + M];
 	char * pstr;
-	char* pstr2;
+	char * pstr2;
 
 	if (!(fpequipos = fopen("grupos.txt", "r"))){
 		fprintf(stderr, "Error, no se pudo abrir grupos.txt, existe?\n");
@@ -75,13 +75,19 @@ size_t TraerEquipos(tequipo **  equipos){
 
 		pstr = strtok(str, ";");
 		if (pstr) strcpy((*equipos)[used_size].id, pstr);
-
+        
 		pstr = strtok(NULL, ";");
 		pstr2 = strtok(pstr, "\r\n");
 
 		if (pstr2) strcpy((*equipos)[used_size].nombre, pstr2);
 
 		used_size++;
+        
+        if( BuscarEquipoPorId(*equipos,(*equipos)[used_size-1].id, used_size)==NULL ){
+            fprintf(stderr, "Error, equipos duplicados para el archivo de equipos.\n");
+            return 0;
+        }
+
 
 	}
 
@@ -170,6 +176,10 @@ t_bool leerPartidosJugados(tlista * listaJugados , tlista * listaPartidos, tequi
 		fread(buffer+2, sizeof(int), 1, fpPartidosJugados);
 		/*printf("%d \n", buffer[2]);*/
         
+        if ( BuscarPartidoPorId(*listaPartidos, buffer[ID])==NULL ) {
+            fprintf(stderr, "Error, archivo binario malformado.\n");
+            return TRUE;
+        }
         newPartidoJugado(buffer[ID],buffer[GOL1],buffer[GOL2],listaPartidos,listaJugados, equipos, cantEquipos/*, tablaPos */);
         
 	}
@@ -571,8 +581,8 @@ t_bool newPartidoJugado(int idPartido, int gol1, int gol2,tlista * partidosPendi
 		if (!partido)
 		{
 			partido = BuscarPartidoPorId((*partidosJugados), idPartido);
-			if (!partido) fprintf(stderr,"Ese partido es invalido");
-			else fprintf(stderr,"Ese partido ya se jugo");
+			if (!partido) fprintf(stderr,"Ese partido es invalido\n");
+			else fprintf(stderr,"Ese partido ya se jugo\n");
             return TRUE;
 		}
 	
@@ -834,7 +844,7 @@ t_bool ModificarPartidoJugado(tlista listajugados, tpartido * partido, int gol1,
         aux=aux->sig;
     }
     
-    fprintf(stderr,"No se pudo modificar el partido %d", partido->idPartido);
+    fprintf(stderr,"No se pudo modificar el partido %d\n", partido->idPartido);
     return TRUE;
     
 }

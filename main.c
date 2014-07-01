@@ -40,6 +40,7 @@ int main(int argc, const char * argv[]){
     unsigned long id, gol1,gol2;
     tpartido * partidoAux;
     char NombreArchivoAPI[M];
+    size_t counterEquipos;
     /* 
      ############################################################## */
     
@@ -57,7 +58,10 @@ int main(int argc, const char * argv[]){
     /* 
      traemos de archivo los equipos */
 	Brasil2014.q_equipos = TraerEquipos(&(Brasil2014.equipos));
-    
+    if (Brasil2014.q_equipos==0) {
+        fprintf(stderr, "Error, No hay equipos cargados.\n");
+        return 1;
+    }
     /* 
      traemos de archivo la lista de partidos */
 	if(  TraerPartidos(Brasil2014.equipos, Brasil2014.q_equipos, &(Brasil2014.partidosPendientes))==TRUE  ){
@@ -123,6 +127,7 @@ int main(int argc, const char * argv[]){
                                     state_subsubmenu_partidonuevo=(opt_subsubpartidonuevo)userInputUlong();
                                     //scanf("%ul",&state_subsubmenu_partidonuevo);
                                     switch (state_subsubmenu_partidonuevo) {
+                                            
                                         case opt_id:
                                             // inicio de agregar partido por id
                                             printf("Ingrese el id del partido jugado: ");
@@ -151,20 +156,22 @@ int main(int argc, const char * argv[]){
                                             printf("Presione cualquier tecla para volver al menu ...\n");
                                             getchar();
                                             break;
+                                            
                                         case opt_equipo:
                                             //se agrega un nuevo partido por equipo ...
                                             printf("agrego un nuevo partido por equipo\n");
                                             getchar();
                                             break;
+                                            
                                         case opt_subpartidosnuevo_return:
                                             cls();
                                             break;
+                                            
                                         default:
                                             printf("%s\n","Opcion Invalida");
                                             dump_line(stdin);
                                             printf("Presione cualquier tecla para volver al subsubmenu de nuevos partidos ...\n");
                                             getchar();
-
                                             break;
 
                                     }
@@ -181,9 +188,8 @@ int main(int argc, const char * argv[]){
                                     state_subsubmenu_partidojugado=(opt_subsubpartidojugado)userInputUlong();
                                     //scanf("%ul",&state_subsubmenu_partidojugado);
                                     switch (state_subsubmenu_partidojugado) {
+                                            
                                         case opt_modificar:
-                                            // modificar un partido ya jugado ...
-                                            printf("modifico un partido ya jugado de la lista de jugados\n");
                                             printf("Ingrese el id del partido jugado que quiere modificar: ");
                                             id=userInputUlong();
                                             if ( (partidoAux=BuscarPartidoPorId(Brasil2014.partidosJugados, (int)id ) ) == NULL ){
@@ -205,14 +211,17 @@ int main(int argc, const char * argv[]){
                                             printf("%s  %d vs %s %d \n",partidoAux->equipo1->nombre,partidoAux->golesEq1,partidoAux->equipo2->nombre,partidoAux->golesEq2);
                                             getchar();
                                             break;
+                                            
                                         case opt_eliminar:
                                             //eliminar un partido ya jugado ...
                                             printf("elimino un partido ya jugado de la lista de jugados\n");
                                             getchar();
                                             break;
+                                            
                                         case opt_subpartidosjugados_return:
                                             cls();
                                             break;
+                                            
                                         default:
                                             printf("%s\n","Opcion Invalida");
                                             dump_line(stdin);
@@ -241,8 +250,6 @@ int main(int argc, const char * argv[]){
 
                         }
                         
-                        
-                        
                     }
                     //dump_line(stdin);
                     //getchar();
@@ -258,24 +265,31 @@ int main(int argc, const char * argv[]){
                         //scanf("%ul",&state_submenu_reportes);
                         
                         switch (state_submenu_reportes) {
+                                
                             case opt_equipos:
-                                //reportes por equipos ...
-                                printf("imprimo los reportes por eqipos\n");
+                                printf("Lista de equipos del mundial\n");
+                                for (counterEquipos=0; counterEquipos<Brasil2014.q_equipos; counterEquipos++) {
+                                    printf("Grupo: %s Pais: %s\n",Brasil2014.equipos[counterEquipos].id,Brasil2014.equipos[counterEquipos].nombre);
+                                }
                                 getchar();
                                 break;
+                                
                             case opt_partidospendientes:
                                 printf("Lista de Partidos Pendientes: \n");
                                 RecorrerPartidos(Brasil2014.partidosPendientes);
                                 getchar();
                                 break;
+                                
                             case opt_tablapos:
                                 printf("Lista de Posiciones por grupos: \n");
                                 RecorrerTablaPos(tablaPos);
                                 getchar();
                                 break;
+                                
                             case opt_subreportes_return:
                                 cls();
                                 break;
+                                
                             default:
                                 printf("%s\n","Opcion Invalida");
                                 dump_line(stdin);
@@ -288,6 +302,7 @@ int main(int argc, const char * argv[]){
                     //dump_line(stdin);
                     }
                     break;
+                    
                 case opt_api:
                     printf("Opcion de carga avanzada mediante archivo de partidos en csv con sus goles\n");
                     printf("Se debe de ingresar en el siguiente formato:\n");

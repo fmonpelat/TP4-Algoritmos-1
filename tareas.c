@@ -200,11 +200,11 @@ unsigned long userInputUlong(void){
     return number;
 }
 
-//API CSV carga
+//CSV carga
 
-t_bool leerPartidosAPI(tlista * listaJugados , tlista * listaPartidos, tequipo * equipos, size_t cantEquipos,char * NombreArchivo,tvectorPosiciones * tablaPos){
+t_bool leerPartidosCSV(tlista * listaJugados , tlista * listaPartidos, tequipo * equipos, size_t cantEquipos,char * NombreArchivo,tvectorPosiciones * tablaPos){
     
-	FILE * fpPartidosAPI;
+	FILE * fpPartidosCSV;
     tpartido * partidoAux;
     int idPartido = 0;
     char idEquipo1[M_ID];
@@ -225,21 +225,21 @@ t_bool leerPartidosAPI(tlista * listaJugados , tlista * listaPartidos, tequipo *
         return TRUE;
     }
     
-	fpPartidosAPI = fopen(NombreArchivo, "rb");
+	fpPartidosCSV = fopen(NombreArchivo, "rb");
     
-	if (!fpPartidosAPI) {
+	if (!fpPartidosCSV) {
 		fprintf(stderr, "Error, no se pudo abrir %s\n", NombreArchivo);
 		return TRUE;
 	}
     
-    while (!feof(fpPartidosAPI)){
+    while (!feof(fpPartidosCSV)){
         
-        fscanf(fpPartidosAPI, "%d,%2c,%2c,%d/%d/%d,%d,%d\n", &idPartido, (char *)&idEquipo1, (char *)&idEquipo2, &dia, &mes, &anio,&gol1,&gol2);
+        fscanf(fpPartidosCSV, "%d,%2c,%2c,%d/%d/%d,%d,%d\n", &idPartido, (char *)&idEquipo1, (char *)&idEquipo2, &dia, &mes, &anio,&gol1,&gol2);
         
         if ( (partidoAux=BuscarPartidoPorId(*listaPartidos, (int)idPartido ) ) == NULL ){
             if(  (partidoAux=BuscarPartidoPorId(*listaJugados, (int)idPartido )) == NULL ){
                 fprintf(stderr,"No existe el id (%d) de ese partido!\n",idPartido);
-                fprintf(stderr, "Archivo de API CSV Malformado verifique y pruebe nuevamente.\n");
+                fprintf(stderr, "Archivo de CSV Malformado verifique y pruebe nuevamente.\n");
                 return TRUE;
             }
             ModificarPartidoJugado(*listaJugados, partidoAux, gol1, gol2, tablaPos);

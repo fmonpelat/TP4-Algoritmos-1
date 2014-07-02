@@ -30,7 +30,7 @@ void PrintMainMenu(void){
     printf("menu principal\n");
     printf("1) Partidos\n");
     printf("2) Reportes\n");
-    printf("3) API (Opcion Avanzada)\n\n");
+    printf("3) Carga Csv (Opcion Avanzada)\n\n");
     
     printf("Presione 0 para salir... \n");
     printf("##########################################################################\n");

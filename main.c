@@ -33,13 +33,12 @@ int main(int argc, const char * argv[]){
     if ( TestModificarPartido() ) {
         return EXIT_FAILURE;
     }
+    */
     
-    
-    /* 
-     ######################### VARIABLES ########################## */
+    /* ######################### VARIABLES ########################## */
     unsigned long id, gol1,gol2;
     tpartido * partidoAux;
-    char NombreArchivoAPI[M];
+    char NombreArchivoCSV[M];
     size_t counterEquipos;
     /* 
      ############################################################## */
@@ -303,18 +302,18 @@ int main(int argc, const char * argv[]){
                     }
                     break;
                     
-                case opt_api:
+                case opt_csv:
                     printf("Opcion de carga avanzada mediante archivo de partidos en csv con sus goles\n");
                     printf("Se debe de ingresar en el siguiente formato:\n");
                     printf("1,A1,A2,12/06/2014,golA1,golA2\n");
                     printf("Ingrese el nombre del archivo: (para salir escriba salir) \n");
-                    fgets(NombreArchivoAPI, M+1, stdin);
-                    NombreArchivoAPI[strlen(NombreArchivoAPI)-1]='\0';
-                    if ( !strcmp(NombreArchivoAPI, "salir") ) {
+                    fgets(NombreArchivoCSV, M+1, stdin);
+                    NombreArchivoCSV[strlen(NombreArchivoCSV)-1]='\0';
+                    if ( !strcmp(NombreArchivoCSV, "salir") ) {
                         cls();
                         break;
                     }
-                    if( leerPartidosAPI(&Brasil2014.partidosJugados, &Brasil2014.partidosPendientes, Brasil2014.equipos, Brasil2014.q_equipos,NombreArchivoAPI,tablaPos)==TRUE)break;
+                    if( leerPartidosCSV(&Brasil2014.partidosJugados, &Brasil2014.partidosPendientes, Brasil2014.equipos, Brasil2014.q_equipos,NombreArchivoCSV,tablaPos)==TRUE)break;
                     ActualizarVecPos(Brasil2014.partidosJugados, tablaPos);
                     printf("Se cargaron satisfactoriamente los partidos.\n");
                     getchar();

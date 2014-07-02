@@ -199,14 +199,15 @@ int TestModificarPartido(void){
 int TestALL(void){
     
     t_bool error=FALSE;
-    size_t id,gol1,gol2,counterEquipos;
+    size_t counterEquipos;
     tmundial mundialx;
     mundialx.equipos=NULL;
     mundialx.partidosJugados=NULL;
     mundialx.partidosPendientes=NULL;
 	tvectorPosiciones * tablaPos = NULL;
     tpartido * partidoaModificar;
-    tpartido * partidoAux;
+    //size_t id,gol1,gol2;
+    //tpartido * partidoAux;
     
     // traemos de archivo los equipos
 	mundialx.q_equipos = TraerEquipos(&(mundialx.equipos));

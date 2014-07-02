@@ -10,8 +10,6 @@
 
 
 
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -141,9 +139,9 @@ int main(int argc, const char * argv[]){
                                                 getchar();
                                                 break;
                                             }
-                                            printf("\nIngrese los goles del equipo 1 ( %s ): ",partidoAux->equipo1->nombre);
+                                            printf("\nIngrese los goles del equipo 1 ( %s ): \n",partidoAux->equipo1->nombre);
                                             gol1=userInputUlong();
-                                            printf("\nIngrese los goles del equipo 1 ( %s ): ",partidoAux->equipo2->nombre);
+                                            printf("Ingrese los goles del equipo 1 ( %s ): \n",partidoAux->equipo2->nombre);
                                             gol2=userInputUlong();
                                             if ( newPartidoJugadoXP(partidoAux,(int)gol1,(int)gol2,&Brasil2014.partidosPendientes,&Brasil2014.partidosJugados, Brasil2014.equipos, Brasil2014.q_equipos) == TRUE ){
                                                 fprintf(stderr, "Error, al modificar el partido.\n");
@@ -168,7 +166,7 @@ int main(int argc, const char * argv[]){
                                             
                                         default:
                                             printf("%s\n","Opcion Invalida");
-                                            dump_line(stdin);
+                                            //dump_line(stdin);
                                             printf("Presione cualquier tecla para volver al subsubmenu de nuevos partidos ...\n");
                                             getchar();
                                             break;
@@ -208,12 +206,31 @@ int main(int argc, const char * argv[]){
                                             ModificarPartidoJugado(Brasil2014.partidosJugados, partidoAux, (int)gol1, (int)gol2, tablaPos);
                                             printf("se modifico el partido:\n ");
                                             printf("%s  %d vs %s %d \n",partidoAux->equipo1->nombre,partidoAux->golesEq1,partidoAux->equipo2->nombre,partidoAux->golesEq2);
+                                            
                                             getchar();
                                             break;
                                             
                                         case opt_eliminar:
                                             //eliminar un partido ya jugado ...
                                             printf("elimino un partido ya jugado de la lista de jugados\n");
+                                            printf("Ingrese el id del partido jugado que quiere eliminar: ");
+                                            id=userInputUlong();
+                                            if ( (partidoAux=BuscarPartidoPorId(Brasil2014.partidosJugados, (int)id ) ) == NULL ){
+                                                if(  (partidoAux=BuscarPartidoPorId(Brasil2014.partidosPendientes, (int)id )) == NULL ){
+                                                    fprintf(stderr,"No existe el id (%lu) de ese partido!\n",id);
+                                                    getchar();
+                                                    break;
+                                                }
+                                                printf("Ese partido no se jugo todavia.\n Para eliminar ingrese uno que ya se haya jugado.\n");
+                                                getchar();
+                                                break;
+                                            }
+                                            gol1=0;
+                                            gol2=0;
+                                            newPartidoJugadoXP(partidoAux, (int)gol1, (int)gol2, &Brasil2014.partidosJugados, &Brasil2014.partidosPendientes, Brasil2014.equipos, Brasil2014.q_equipos);
+                                            printf("se elimino el partido:\n ");
+                                            printf("%s vs %s \n",partidoAux->equipo1->nombre,partidoAux->equipo2->nombre);
+                                            printf("\nPresione cualquier tecla para volver al menu ...\n");
                                             getchar();
                                             break;
                                             
@@ -224,7 +241,7 @@ int main(int argc, const char * argv[]){
                                         default:
                                             printf("%s\n","Opcion Invalida");
                                             dump_line(stdin);
-                                            printf("Presione cualquier tecla para volver al subsubmenu de partidos jugados ...\n");
+                                            printf("\nPresione cualquier tecla para volver al subsubmenu de partidos jugados ...\n");
                                             getchar();
                                             cls();
                                             break;
@@ -270,18 +287,21 @@ int main(int argc, const char * argv[]){
                                 for (counterEquipos=0; counterEquipos<Brasil2014.q_equipos; counterEquipos++) {
                                     printf("Grupo: %s Pais: %s\n",Brasil2014.equipos[counterEquipos].id,Brasil2014.equipos[counterEquipos].nombre);
                                 }
+                                printf("Presione cualquier tecla para volver al menu de reportes ...\n");
                                 getchar();
                                 break;
                                 
                             case opt_partidospendientes:
                                 printf("Lista de Partidos Pendientes: \n");
                                 RecorrerPartidos(Brasil2014.partidosPendientes);
+                                printf("Presione cualquier tecla para volver al menu de reportes ...\n");
                                 getchar();
                                 break;
                                 
                             case opt_tablapos:
                                 printf("Lista de Posiciones por grupos: \n");
                                 RecorrerTablaPos(tablaPos);
+                                printf("Presione cualquier tecla para volver al menu de reportes ...\n");
                                 getchar();
                                 break;
                                 
@@ -316,6 +336,7 @@ int main(int argc, const char * argv[]){
                     if( leerPartidosCSV(&Brasil2014.partidosJugados, &Brasil2014.partidosPendientes, Brasil2014.equipos, Brasil2014.q_equipos,NombreArchivoCSV,tablaPos)==TRUE)break;
                     ActualizarVecPos(Brasil2014.partidosJugados, tablaPos);
                     printf("Se cargaron satisfactoriamente los partidos.\n");
+                    printf("Presione cualquier tecla para volver al menu principal...\n");
                     getchar();
                     break;
                     

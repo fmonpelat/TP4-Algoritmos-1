@@ -20,68 +20,68 @@ void cls(void){
     // para unix,bsd, linux solamente.
     system("clear");
     // para windows
-    // system("cls");
+     //system("cls");
 }
 
 
 void PrintMainMenu(void){
-    
+
     printf("##########################################################################\n");
     printf("menu principal\n");
     printf("1) Partidos\n");
     printf("2) Reportes\n");
     printf("3) Carga Csv (Opcion Avanzada)\n\n");
-    
+
     printf("Presione 0 para salir... \n");
     printf("##########################################################################\n");
-    
+
 }
 
 void PrintsubMenuPartidos(void){
-    
+
     printf("##########################################################################\n");
     printf("submenu partidos\n");
     printf("1) Nuevo Partido Jugado\n");
     printf("2) Partidos Jugados\n\n");
-    
+
     printf("Presione 0 para volver al menu principal ... \n\n");
     printf("##########################################################################\n");
-    
+
 }
 
 void PrintsubMenuReportes(void){
-    
+
     printf("##########################################################################\n");
     printf("submenu reportes\n");
     printf("1) reportes por equipos\n");
     printf("2) reportes por partidos pendientes\n");
     printf("3) imprimir tablas de posiciones por grupos\n\n");
-    
+
     printf("Presione 0 para volver al menu principal ... \n\n");
     printf("##########################################################################\n");
-    
+
 }
 
 void PrintsubsubMenuPartidos(void){
-    
+
     printf("##########################################################################\n");
     printf("submenu partidos nuevos jugados\n");
     printf("1) Nuevo partido jugado por id\n");
     printf("2) Nuevo partido jugado por equipos\n\n");
-    
+
     printf("Presione 0 para volver al menu de partidos ... \n\n");
     printf("##########################################################################\n");
-    
+
 }
 
 void PrintsubsubMenuPartidosJugados(void){
-    
+
     printf("##########################################################################\n");
     printf("submenu partidos jugados\n");
     printf("1) Modificar partido jugado por id\n");
     printf("2) Eliminar partido jugado por id\n\n");
-    
+
     printf("Presione 0 para volver al menu de partidos ... \n\n");
     printf("##########################################################################\n");
-    
+
 }

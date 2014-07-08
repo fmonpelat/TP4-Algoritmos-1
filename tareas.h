@@ -101,14 +101,15 @@ int TestALL(void);
 t_bool TraerPartidos( tequipo * ,size_t , tlista * );
 void TestTraerPartidos( void );
 void DestruirPartidos( tnodo * nodo); /*libera la memoria */
-void AgregarNodoEquipo( tnodo ** , tequipo* ,size_t , int , char * , char * , int , int , int );
+void AgregarNodoPartidos( tnodo ** , tequipo* ,size_t , int , char * , char * , int , int , int ); //reserva memoria
 tequipo * BuscarEquipoPorId( tequipo * , char * , size_t );
 void RecorrerPartidos( tlista );
 t_bool ValidarPartidos(tlista lista);
 
-t_bool PartidoJugadoNuevo(char , tlista * , tlista * , tequipo * , size_t , tvectorPosiciones * );
+t_bool PartidoJugadoNuevo(char , tlista * , tlista * , tequipo * , size_t , tvectorPosiciones * ); //no la usamos
 tequipoPos * BuscarEquipoPorIdEnTablaPos(tvectorPosiciones * equiposEnTabla, char * id);
-tvectorPosiciones * CrearVecPos(tlista partidosJugados, tequipo* equipos, size_t qEquipos);
+tvectorPosiciones * CrearVecPos(tlista partidosJugados, tequipo* equipos, size_t qEquipos); //reserva memoria
+void DestruirVecPos(tvectorPosiciones*);
 
 //esta funcion si le pasas un 0 a int borrar
 t_bool ModificarTablaPos(tvectorPosiciones * tablaPos, tpartido * partido, int borrar);
@@ -120,7 +121,7 @@ void ActualizarVecPos(tlista partidosJugados, tvectorPosiciones * vecPos);
 void RecorrerTablaPos(tvectorPosiciones *tablaPos);
 void OrdenarTablaPos(tvectorPosiciones *tablaPos);
 void IntercambiarVecPos(tequipoPos** equipo1, tequipoPos** equipo2);
-
+t_bool ValidarPartidosJugados(tlista listaJugados, tlista listaPartidos);
 
 
 
